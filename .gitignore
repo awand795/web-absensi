@@ -1,0 +1,28 @@
+# Dependencies
+absensi-wajah-frontend/node_modules/
+absensi-web-app/vendor/
+
+# Environment
+.env
+.env.backup
+.env.production
+
+# Build
+absensi-wajah-frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Claude
+.claude/
