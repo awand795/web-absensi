@@ -1,28 +1,44 @@
 <?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-echo "Autoloading... ";
+// Create storage directories in /tmp for Vercel's read-only environment
+$storageDirs = [
+    '/tmp/storage/framework/views',
+    '/tmp/storage/framework/sessions',
+    '/tmp/storage/framework/cache',
+    '/tmp/storage/logs',
+];
+
+foreach ($storageDirs as $dir) {
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+}
+
 require __DIR__ . '/../vendor/autoload.php';
-echo "Done. Bootstrapping Laravel... ";
 
 try {
-    $appFile = __DIR__ . '/../bootstrap/app.php';
-    if (!file_exists($appFile)) {
-        die("bootstrap/app.php NOT FOUND at " . $appFile);
-    }
+    /** @var Application $app */
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+
+    // Force Laravel to use /tmp for its storage-related needs if not already handled
+    $app->useStoragePath('/tmp/storage');
+
+    echo "<!-- Laravel Booted -->";
     
-    $app = require_once $appFile;
-    echo "App instance created successfully! ";
-    
-    if (isset($app)) {
-        echo "App type: " . get_class($app);
-    }
+    $app->handleRequest(Request::capture());
+
 } catch (\Throwable $e) {
-    echo "\nFATAL ERROR DURING BOOTSTRAP:\n";
-    echo "Message: " . $e->getMessage() . "\n";
-    echo "File: " . $e->getFile() . "\n";
-    echo "Line: " . $e->getLine() . "\n";
-    echo "Trace: \n" . $e->getTraceAsString();
+    http_response_code(500);
+    echo "<h1>FATAL ERROR DURING REQUEST HANDLING</h1>";
+    echo "<p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . $e->getFile() . "</p>";
+    echo "<p><strong>Line:</strong> " . $e->getLine() . "</p>";
+    echo "<pre><strong>Trace:</strong>\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
 }
-exit;
