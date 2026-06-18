@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\UserFace;
 use Carbon\Carbon;
 use App\Models\Shift;
+use App\Models\Notification;
 
 class LogAbsensi extends Controller
 {
@@ -87,6 +88,15 @@ class LogAbsensi extends Controller
             'location_id' => $locationId,
         ]);
 
+        // Send notification
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'success',
+            'title' => 'Clock-in Berhasil',
+            'message' => "Anda berhasil clock-in pada {$now->format('H:i')} dengan status {$status}.",
+            'link' => '/history',
+        ]);
+
         return response()->json([
             'message' => 'Clock in successful',
             'status' => 'success',
@@ -157,8 +167,35 @@ class LogAbsensi extends Controller
             ], 400);
         }
 
-        $logabsen->clock_out = Carbon::now()->toDateTimeString();
+        $now = Carbon::now();
+        $logabsen->clock_out = $now->toDateTimeString();
+
+        // Calculate overtime
+        $shift = $logabsen->shift;
+        if ($shift) {
+            $shiftEnd = Carbon::parse($logabsen->date . ' ' . $shift->end_time);
+            // Handle overnight shifts (end_time < start_time)
+            if ($shift->end_time < $shift->start_time) {
+                $shiftEnd->addDay();
+            }
+            $clockOutTime = Carbon::parse($logabsen->clock_out);
+            if ($clockOutTime > $shiftEnd) {
+                $overtimeMinutes = $clockOutTime->diffInMinutes($shiftEnd);
+                $logabsen->overtime_minutes = $overtimeMinutes;
+            }
+        }
+
         $logabsen->save();
+
+        // Send notification
+        $overtimeMsg = $logabsen->overtime_minutes > 0 ? " dengan lembur " . floor($logabsen->overtime_minutes / 60) . "j " . ($logabsen->overtime_minutes % 60) . "m." : ".";
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'success',
+            'title' => 'Clock-out Berhasil',
+            'message' => "Anda berhasil clock-out pada {$now->format('H:i')}{$overtimeMsg}",
+            'link' => '/history',
+        ]);
 
         return response()->json([
             'message' => 'Clock out successful',

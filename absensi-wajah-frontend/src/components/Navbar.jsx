@@ -4,7 +4,7 @@ import {
   FiHome, FiClock, FiCamera, FiFileText, FiCalendar,
   FiUsers, FiSettings, FiLogOut, FiMapPin, FiBarChart2,
   FiMenu, FiX, FiChevronDown, FiUserCheck, FiSun, FiMoon,
-  FiInfo
+  FiInfo, FiUser, FiBell, FiGrid
 } from 'react-icons/fi';
 import { useTheme } from '../lib/ThemeContext';
 
@@ -29,6 +29,10 @@ const Navbar = () => {
         { to: '/face-register', icon: <FiCamera size={18} />, label: 'Daftar Wajah' },
         { to: '/history', icon: <FiCalendar size={18} />, label: 'Riwayat' },
         { to: '/leave', icon: <FiFileText size={18} />, label: 'Izin' },
+        { to: '/profile', icon: <FiUser size={18} />, label: 'Profil' },
+        { to: '/calendar', icon: <FiGrid size={18} />, label: 'Kalender' },
+        { to: '/notifications', icon: <FiBell size={18} />, label: 'Notifikasi' },
+        { to: '/profile', icon: <FiUser size={18} />, label: 'Profil' },
         { to: '/tentang', icon: <FiInfo size={18} />, label: 'Tentang' },
     ];
 

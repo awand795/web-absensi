@@ -3,6 +3,10 @@ import { lazy, Suspense } from "react";
 import Login from './pages/login';
 import Landing from './pages/Landing';
 import Tentang from './pages/Tentang';
+import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
+import Notifications from './pages/Notifications';
+import AttendanceCalendar from './pages/AttendanceCalendar';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -30,7 +34,7 @@ function LoadingFallback() {
 
 function AppLayout() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/tentang';
+  const hideNavbar = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/tentang' || location.pathname === '/forgot-password';
 
   return (
     <>
@@ -40,6 +44,10 @@ function AppLayout() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/tentang" element={<Tentang />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+          <Route path="/calendar" element={<PrivateRoute><AttendanceCalendar /></PrivateRoute>} />
           <Route path="/attendance" element={<PrivateRoute><Attendance /></PrivateRoute>} />
           <Route path="/face-register" element={<PrivateRoute><FaceRegister /></PrivateRoute>} />
           <Route path="/history" element={<PrivateRoute><AttendanceHistory /></PrivateRoute>} />

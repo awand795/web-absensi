@@ -133,6 +133,16 @@ const Login = () => {
                             )}
                         </button>
 
+                        <div className="text-center">
+                            <Link to="/forgot-password"
+                                className="inline-flex items-center gap-1.5 text-sm transition-colors"
+                                style={{ color: 'var(--text-muted)' }}
+                                onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
+                                onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
+                                Lupa Password?
+                            </Link>
+                        </div>
+
                         {/* Demo Accounts */}
                         <div>
                             <div className="flex items-center gap-2 mb-3">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FiCalendar, FiChevronLeft, FiChevronRight, FiClock } from 'react-icons/fi';
+import { FiCalendar, FiChevronLeft, FiChevronRight, FiClock, FiDownload, FiGrid } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
 
 const AttendanceHistory = () => {
@@ -99,28 +100,50 @@ const AttendanceHistory = () => {
                 <div className="flex items-center justify-between">
                     <button
                         onClick={prevMonth}
-                        className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200"
-                    >
+                        className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
+                        style={{ color: 'var(--text-muted)' }}
+                        onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
+                        onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
                         <FiChevronLeft size={20} />
                     </button>
                     <div className="flex items-center gap-3">
-                        <span className="text-lg font-semibold text-white">{monthNames[month - 1]}</span>
+                        <span className="text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>{monthNames[month - 1]}</span>
                         <select
                             value={year}
                             onChange={e => setYear(Number(e.target.value))}
                             className="input-field w-auto"
                         >
-                            {[2024, 2025, 2026].map(y => (
+                            {[2024, 2025, 2026, 2027, 2028].map(y => (
                                 <option key={y} value={y}>{y}</option>
                             ))}
                         </select>
                     </div>
-                    <button
-                        onClick={nextMonth}
-                        className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-400 hover:text-white hover:bg-slate-700/40 transition-all duration-200"
-                    >
-                        <FiChevronRight size={20} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Link to="/calendar"
+                            className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
+                            style={{ color: 'var(--text-muted)' }}
+                            onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
+                            onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                            <FiGrid size={18} />
+                        </Link>
+                        <a href={`http://localhost:8000/api/export/csv?month=${month}&year=${year}`}
+                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200"
+                            style={{ color: '#7d9b76', background: 'rgba(125,155,118,0.08)' }}
+                            onMouseOver={e => e.target.style.background = 'rgba(125,155,118,0.15)'}
+                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}
+                            target="_blank" rel="noopener noreferrer">
+                            <FiDownload size={14} />
+                            Export CSV
+                        </a>
+                        <button
+                            onClick={nextMonth}
+                            className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
+                            style={{ color: 'var(--text-muted)' }}
+                            onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
+                            onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                            <FiChevronRight size={20} />
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FiCalendar, FiSearch, FiLoader, FiBarChart2, FiClock } from 'react-icons/fi';
+import { FiCalendar, FiSearch, FiLoader, FiBarChart2, FiClock, FiDownload, FiFileText } from 'react-icons/fi';
 import api from '../../api/axios';
 
 const getDefaultDates = () => {
@@ -78,6 +78,26 @@ const AttendanceReport = () => {
                         <FiSearch size={16} />
                         Cari
                     </button>
+                    <div className="flex gap-2 ml-auto">
+                        <a href={`http://localhost:8000/api/export/csv?month=${new Date(startDate).getMonth() + 1}&year=${new Date(startDate).getFullYear()}`}
+                            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+                            style={{ color: '#7d9b76', background: 'rgba(125,155,118,0.08)' }}
+                            onMouseOver={e => e.target.style.background = 'rgba(125,155,118,0.15)'}
+                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}
+                            target="_blank" rel="noopener noreferrer">
+                            <FiFileText size={14} />
+                            Export CSV
+                        </a>
+                        <a href={`http://localhost:8000/api/export/excel?month=${new Date(startDate).getMonth() + 1}&year=${new Date(startDate).getFullYear()}`}
+                            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+                            style={{ color: '#d45a4a', background: 'rgba(212,90,74,0.08)' }}
+                            onMouseOver={e => e.target.style.background = 'rgba(212,90,74,0.15)'}
+                            onMouseOut={e => e.target.style.background = 'rgba(212,90,74,0.08)'}
+                            target="_blank" rel="noopener noreferrer">
+                            <FiDownload size={14} />
+                            Export Excel
+                        </a>
+                    </div>
                 </div>
             </div>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Izin as IzinModel;
+use App\Models\Notification;
 
 class IzinController extends Controller
 {
@@ -46,12 +47,38 @@ class IzinController extends Controller
     public function approve($id){
         $izin = IzinModel::findOrFail($id);
         $izin->update(['persetujuan' => 'Disetujui']);
+
+        // Send notification to user
+        $user = \App\Models\User::where('id_karyawan', $izin->id_karyawan)->first();
+        if ($user) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'success',
+                'title' => 'Izin Disetujui',
+                'message' => "Izin {$izin->jenis_izin} Anda pada {$izin->tanggal_mulai} telah disetujui.",
+                'link' => '/leave',
+            ]);
+        }
+
         return response()->json(['message' => 'Izin disetujui', 'data' => $izin]);
     }
 
     public function reject($id){
         $izin = IzinModel::findOrFail($id);
         $izin->update(['persetujuan' => 'Ditolak']);
+
+        // Send notification to user
+        $user = \App\Models\User::where('id_karyawan', $izin->id_karyawan)->first();
+        if ($user) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'error',
+                'title' => 'Izin Ditolak',
+                'message' => "Izin {$izin->jenis_izin} Anda pada {$izin->tanggal_mulai} telah ditolak.",
+                'link' => '/leave',
+            ]);
+        }
+
         return response()->json(['message' => 'Izin ditolak', 'data' => $izin]);
     }
 }
