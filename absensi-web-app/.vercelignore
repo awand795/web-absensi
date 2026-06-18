@@ -1,0 +1,22 @@
+# Dependencies
+/vendor
+/node_modules
+
+# Laravel local assets
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/app/*
+
+# Git
+.git
+.gitignore
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Docs
+*.md

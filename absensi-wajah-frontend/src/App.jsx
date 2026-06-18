@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import Login from './pages/login';
+import Landing from './pages/Landing';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -15,16 +16,28 @@ const LeaveApproval = lazy(() => import('./pages/admin/LeaveApproval'));
 const AttendanceReport = lazy(() => import('./pages/admin/AttendanceReport'));
 const LocationManagement = lazy(() => import('./pages/admin/LocationManagement'));
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
+      <div className="glass-card p-8 flex flex-col items-center gap-4">
+        <div className="loading-spinner w-10 h-10" />
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat halaman...</p>
+      </div>
+    </div>
+  );
+}
+
 function AppLayout() {
   const location = useLocation();
-  const isLogin = location.pathname === '/';
+  const hideNavbar = location.pathname === '/' || location.pathname === '/login';
 
   return (
     <>
-      {!isLogin && <Navbar />}
-      <Suspense fallback={<div className="page-container"><p>Memuat halaman...</p></div>}>
+      {!hideNavbar && <Navbar />}
+      <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/attendance" element={<PrivateRoute><Attendance /></PrivateRoute>} />
           <Route path="/face-register" element={<PrivateRoute><FaceRegister /></PrivateRoute>} />
           <Route path="/history" element={<PrivateRoute><AttendanceHistory /></PrivateRoute>} />

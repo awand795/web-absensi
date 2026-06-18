@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FiMapPin, FiPlus, FiEdit2, FiTrash2, FiNavigation, FiLoader } from 'react-icons/fi';
 import api from '../../api/axios';
 import { MapContainer, TileLayer, Marker, Circle, Popup, useMapEvents, useMap } from 'react-leaflet';
 import L from '../../lib/leafletSetup';
@@ -34,12 +35,14 @@ const LocationManagement = () => {
     const [editing, setEditing] = useState(null);
     const [gettingGps, setGettingGps] = useState(false);
     const [mapCenter, setMapCenter] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const fetchLocations = async () => {
         try {
             const res = await api.get('/locations');
             setLocations(res.data || []);
         } catch (err) { console.error(err); }
+        finally { setLoading(false); }
     };
 
     useEffect(() => { fetchLocations(); }, []);
@@ -110,105 +113,212 @@ const LocationManagement = () => {
 
     return (
         <div className="page-container">
-            <h1>Manajemen Lokasi</h1>
-            <div className="card mb-2">
-                <h2>{editing ? 'Edit Lokasi' : 'Tambah Lokasi'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Nama Lokasi</label>
-                        <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Contoh: Kantor Pusat" required />
-                    </div>
-                    <div className="flex gap-1">
-                        <div className="form-group" style={{ flex: 1 }}>
-                            <label>Latitude</label>
-                            <input type="number" step="any" value={form.latitude} onChange={e => setForm({ ...form, latitude: e.target.value })} placeholder="-6.2088" required />
-                        </div>
-                        <div className="form-group" style={{ flex: 1 }}>
-                            <label>Longitude</label>
-                            <input type="number" step="any" value={form.longitude} onChange={e => setForm({ ...form, longitude: e.target.value })} placeholder="106.8456" required />
-                        </div>
-                        <div className="form-group" style={{ flex: 1 }}>
-                            <label>Radius (meter)</label>
-                            <input type="number" value={form.radius} onChange={e => setForm({ ...form, radius: e.target.value })} min="10" required />
-                        </div>
-                    </div>
-                    <div className="flex gap-1">
-                        <button type="button" className="btn-secondary" onClick={getCurrentGps} disabled={gettingGps}>
-                            {gettingGps ? 'Mendapatkan GPS...' : 'Gunakan Lokasi Saat Ini'}
-                        </button>
-                        <button type="submit" className="btn-primary">{editing ? 'Update' : 'Tambah'}</button>
-                        {editing && <button type="button" className="btn-secondary" onClick={() => { setEditing(null); setForm({ name: '', latitude: '', longitude: '', radius: 100 }); }}>Batal</button>}
-                    </div>
-                </form>
-
-                <div style={{ marginTop: '1em' }}>
-                    <p style={{ fontSize: '0.875em', color: '#6b7280', marginBottom: '0.5em' }}>Klik pada peta untuk memilih lokasi</p>
-                    <MapContainer
-                        center={mapCenter || defaultCenter}
-                        zoom={15}
-                        style={{ height: 350, borderRadius: 8 }}
-                    >
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        <MapClickHandler onMapClick={handleMapClick} />
-                        {mapCenter && <MapCenter center={mapCenter} />}
-
-                        {/* Form preview marker + radius */}
-                        {formHasCoords && (
-                            <>
-                                <Marker position={[parseFloat(form.latitude), parseFloat(form.longitude)]} icon={greenIcon}>
-                                    <Popup>{form.name || 'Lokasi baru'}</Popup>
-                                </Marker>
-                                <Circle
-                                    center={[parseFloat(form.latitude), parseFloat(form.longitude)]}
-                                    radius={parseFloat(form.radius) || 100}
-                                    pathOptions={{ color: '#22c55e', fillOpacity: 0.15 }}
-                                />
-                            </>
-                        )}
-
-                        {/* Existing locations */}
-                        {locations.map(loc => (
-                            <React.Fragment key={loc.id}>
-                                <Marker position={[parseFloat(loc.latitude), parseFloat(loc.longitude)]} icon={redIcon}>
-                                    <Popup>{loc.name} (radius: {loc.radius}m)</Popup>
-                                </Marker>
-                                <Circle
-                                    center={[parseFloat(loc.latitude), parseFloat(loc.longitude)]}
-                                    radius={parseFloat(loc.radius)}
-                                    pathOptions={{ color: '#ef4444', fillOpacity: 0.1 }}
-                                />
-                            </React.Fragment>
-                        ))}
-                    </MapContainer>
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <FiMapPin className="text-white" size={20} />
+                </div>
+                <div>
+                    <h1 className="text-xl font-bold text-white">Manajemen Lokasi</h1>
+                    <p className="text-sm text-slate-400">Atur lokasi absensi</p>
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr><th>Nama</th><th>Latitude</th><th>Longitude</th><th>Radius (m)</th><th>Aksi</th></tr>
-                </thead>
-                <tbody>
-                    {locations.length === 0 ? (
-                        <tr><td colSpan={5} style={{ textAlign: 'center', color: '#9ca3af' }}>Belum ada lokasi</td></tr>
-                    ) : locations.map(loc => (
-                        <tr key={loc.id}>
-                            <td>{loc.name}</td>
-                            <td>{loc.latitude}</td>
-                            <td>{loc.longitude}</td>
-                            <td>{loc.radius}</td>
-                            <td>
-                                <div className="flex gap-1">
-                                    <button className="btn-primary" onClick={() => handleEdit(loc)}>Edit</button>
-                                    <button className="btn-danger" onClick={() => handleDelete(loc.id)}>Hapus</button>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                {/* Form */}
+                <div className="lg:col-span-2">
+                    <div className="glass-card p-6">
+                        <h2 className="text-lg font-semibold text-white mb-5">
+                            {editing ? 'Edit Lokasi' : 'Tambah Lokasi'}
+                        </h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="input-label">Nama Lokasi</label>
+                                <input
+                                    value={form.name}
+                                    onChange={e => setForm({ ...form, name: e.target.value })}
+                                    placeholder="Contoh: Kantor Pusat"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="input-label">Latitude</label>
+                                    <input
+                                        type="number" step="any"
+                                        value={form.latitude}
+                                        onChange={e => setForm({ ...form, latitude: e.target.value })}
+                                        placeholder="-6.2088"
+                                        required
+                                        className="input-field"
+                                    />
                                 </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                <div>
+                                    <label className="input-label">Longitude</label>
+                                    <input
+                                        type="number" step="any"
+                                        value={form.longitude}
+                                        onChange={e => setForm({ ...form, longitude: e.target.value })}
+                                        placeholder="106.8456"
+                                        required
+                                        className="input-field"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="input-label">Radius (meter)</label>
+                                <input
+                                    type="number"
+                                    value={form.radius}
+                                    onChange={e => setForm({ ...form, radius: e.target.value })}
+                                    min="10"
+                                    required
+                                    className="input-field"
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-3">
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={getCurrentGps}
+                                    disabled={gettingGps}
+                                >
+                                    {gettingGps ? (
+                                        <><FiLoader className="animate-spin" size={16} /> Mendapatkan GPS...</>
+                                    ) : (
+                                        <><FiNavigation size={16} /> Gunakan Lokasi Saat Ini</>
+                                    )}
+                                </button>
+                                <button type="submit" className="btn-primary">
+                                    <FiPlus size={16} />
+                                    {editing ? 'Update' : 'Tambah'}
+                                </button>
+                                {editing && (
+                                    <button
+                                        type="button"
+                                        className="btn-secondary"
+                                        onClick={() => { setEditing(null); setForm({ name: '', latitude: '', longitude: '', radius: 100 }); }}
+                                    >
+                                        Batal
+                                    </button>
+                                )}
+                            </div>
+                        </form>
+
+                        {/* Map in form */}
+                        <div className="mt-5">
+                            <p className="text-xs text-slate-500 mb-2">Klik pada peta untuk memilih lokasi</p>
+                            <div className="rounded-xl overflow-hidden border border-slate-700/30">
+                                <MapContainer
+                                    center={mapCenter || defaultCenter}
+                                    zoom={15}
+                                    className="w-full h-[300px]"
+                                    zoomControl={false}
+                                >
+                                    <TileLayer
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    />
+                                    <MapClickHandler onMapClick={handleMapClick} />
+                                    {mapCenter && <MapCenter center={mapCenter} />}
+                                    {formHasCoords && (
+                                        <>
+                                            <Marker position={[parseFloat(form.latitude), parseFloat(form.longitude)]} icon={greenIcon}>
+                                                <Popup>{form.name || 'Lokasi baru'}</Popup>
+                                            </Marker>
+                                            <Circle
+                                                center={[parseFloat(form.latitude), parseFloat(form.longitude)]}
+                                                radius={parseFloat(form.radius) || 100}
+                                                pathOptions={{ color: '#22c55e', fillOpacity: 0.15 }}
+                                            />
+                                        </>
+                                    )}
+                                    {locations.map(loc => (
+                                        <React.Fragment key={loc.id}>
+                                            <Marker position={[parseFloat(loc.latitude), parseFloat(loc.longitude)]} icon={redIcon}>
+                                                <Popup>{loc.name} (radius: {loc.radius}m)</Popup>
+                                            </Marker>
+                                            <Circle
+                                                center={[parseFloat(loc.latitude), parseFloat(loc.longitude)]}
+                                                radius={parseFloat(loc.radius)}
+                                                pathOptions={{ color: '#ef4444', fillOpacity: 0.1 }}
+                                            />
+                                        </React.Fragment>
+                                    ))}
+                                </MapContainer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Table */}
+                <div className="lg:col-span-3">
+                    <div className="glass-card overflow-hidden">
+                        <div className="p-5 border-b border-slate-700/30">
+                            <h2 className="text-lg font-semibold text-white">Daftar Lokasi</h2>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="table-modern">
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                        <th>Radius (m)</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={5} className="text-center py-12">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <div className="loading-spinner w-6 h-6" />
+                                                    <span className="text-sm text-slate-500">Memuat...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : locations.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={5} className="text-center py-12">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <FiMapPin className="text-slate-500" size={24} />
+                                                    <span className="text-sm text-slate-500">Belum ada lokasi</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : locations.map(loc => (
+                                        <tr key={loc.id}>
+                                            <td className="font-medium text-slate-200">{loc.name}</td>
+                                            <td className="text-sm text-slate-300">{loc.latitude}</td>
+                                            <td className="text-sm text-slate-300">{loc.longitude}</td>
+                                            <td className="text-sm text-slate-300">{loc.radius}</td>
+                                            <td>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        className="btn-primary !py-1.5 !px-3 text-xs"
+                                                        onClick={() => handleEdit(loc)}
+                                                    >
+                                                        <FiEdit2 size={14} />
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        className="btn-danger !py-1.5 !px-3 text-xs"
+                                                        onClick={() => handleDelete(loc.id)}
+                                                    >
+                                                        <FiTrash2 size={14} />
+                                                        Hapus
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

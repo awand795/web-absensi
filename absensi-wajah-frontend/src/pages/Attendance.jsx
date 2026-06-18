@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import { FiCamera, FiMapPin, FiClock, FiAlertCircle, FiInfo, FiCheckCircle, FiLoader } from 'react-icons/fi';
 import api from '../api/axios';
 import { loadModels, detectFace } from '../lib/faceModels';
 import { MapContainer, TileLayer, Marker, Circle, Popup } from 'react-leaflet';
@@ -24,11 +25,13 @@ const Attendance = () => {
     const [shifts, setShifts] = useState([]);
     const [selectedShift, setSelectedShift] = useState('');
     const [status, setStatus] = useState('');
+    const [statusType, setStatusType] = useState('info');
     const [processing, setProcessing] = useState(false);
     const [hasFace, setHasFace] = useState(null);
     const [locations, setLocations] = useState([]);
     const [locationsLoaded, setLocationsLoaded] = useState(false);
     const [userPos, setUserPos] = useState(null);
+    const [cameraReady, setCameraReady] = useState(false);
 
     useEffect(() => {
         loadModels().then(() => setModelsLoaded(true));
@@ -60,7 +63,6 @@ const Attendance = () => {
         };
         loadData();
 
-        // Ambil GPS user saat halaman load untuk tampilkan di maps
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (pos) => setUserPos({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
@@ -109,15 +111,18 @@ const Attendance = () => {
         if (!webcamRef.current || processing) return;
         if (!selectedShift && type === 'clock-in') {
             setStatus('Pilih shift terlebih dahulu');
+            setStatusType('error');
             return;
         }
         setProcessing(true);
         setStatus('Memverifikasi wajah...');
+        setStatusType('info');
 
         try {
             const video = webcamRef.current.video;
             if (!video || video.readyState < 2) {
                 setStatus('Kamera belum siap, coba lagi.');
+                setStatusType('error');
                 return;
             }
 
@@ -125,29 +130,32 @@ const Attendance = () => {
 
             if (!detection) {
                 setStatus('Wajah tidak terdeteksi');
+                setStatusType('error');
                 return;
             }
 
             const match = findMatchingUser(Array.from(detection.descriptor));
             if (!match) {
                 setStatus('Wajah tidak dikenali. Daftarkan wajah terlebih dahulu.');
+                setStatusType('error');
                 return;
             }
 
-            // Verifikasi lokasi
             setStatus('Memverifikasi lokasi...');
+            setStatusType('info');
             let location = null;
             try {
                 location = await getLocation();
             } catch (locErr) {
                 setStatus('Gagal: ' + locErr.message);
+                setStatusType('error');
                 return;
             }
 
-            // Update posisi user di maps
             setUserPos(location);
 
             setStatus('Mengirim data absensi...');
+            setStatusType('info');
             const endpoint = type === 'clock-in' ? '/clock-in' : '/clock-out';
             const payload = {
                 latitude: location.latitude,
@@ -157,8 +165,10 @@ const Attendance = () => {
 
             await api.post(endpoint, payload);
             setStatus(`${type === 'clock-in' ? 'Clock-in' : 'Clock-out'} berhasil! (${match.user.name})`);
+            setStatusType('success');
         } catch (err) {
             setStatus('Gagal: ' + (err.response?.data?.message || err.message));
+            setStatusType('error');
         } finally {
             setProcessing(false);
         }
@@ -167,41 +177,152 @@ const Attendance = () => {
     const noLocations = locationsLoaded && locations.length === 0;
     const disableButtons = processing || hasFace === false || noLocations;
 
+    const StatusAlert = ({ type, children }) => {
+        const styles = {
+            error: 'bg-red-500/10 border-red-500/20 text-red-300',
+            warning: 'bg-amber-500/10 border-amber-500/20 text-amber-300',
+            info: 'bg-blue-500/10 border-blue-500/20 text-blue-300',
+            success: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300',
+        };
+        const icons = {
+            error: <FiAlertCircle size={16} />,
+            warning: <FiInfo size={16} />,
+            info: <FiInfo size={16} />,
+            success: <FiCheckCircle size={16} />,
+        };
+        return (
+            <div className={`flex items-start gap-2.5 p-3.5 rounded-xl border ${styles[type] || styles.info}`}>
+                <span className="mt-0.5 shrink-0">{icons[type] || icons.info}</span>
+                <p className="text-sm font-medium">{children}</p>
+            </div>
+        );
+    };
+
     return (
         <div className="page-container">
-            <h1>Absensi</h1>
-            <div className="card">
-                {hasFace === false && (
-                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '1em', marginBottom: '1em' }}>
-                        <p style={{ color: '#991b1b', fontWeight: 500 }}>
-                            Anda belum mendaftarkan wajah. Silakan ke menu <a href="/face-register" style={{ color: '#4f46e5' }}>Daftar Wajah</a> terlebih dahulu.
-                        </p>
-                    </div>
-                )}
-                {noLocations && (
-                    <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '1em', marginBottom: '1em' }}>
-                        <p style={{ color: '#92400e', fontWeight: 500 }}>
-                            Admin belum menyimpan lokasi absensi. Absensi tidak dapat dilakukan sampai lokasi diatur.
-                        </p>
-                    </div>
-                )}
-                {modelsLoaded ? (
-                    <>
-                        <Webcam
-                            ref={webcamRef}
-                            screenshotFormat="image/jpeg"
-                            videoConstraints={{ width: 640, height: 480, facingMode: "user" }}
-                            style={{ width: '100%', maxWidth: 480, borderRadius: 8 }}
-                        />
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl  flex items-center justify-center ">
+                    <FiClock className="text-white" size={20} />
+                </div>
+                <div>
+                    <h1 style={{ color: 'var(--text-heading)' }} className="text-xl font-bold">Absensi</h1>
+                    <p style={{ color: 'var(--text-muted)' }} className="text-sm">Lakukan absensi dengan verifikasi wajah</p>
+                </div>
+            </div>
 
-                        {/* Maps di bawah kamera, di atas tombol */}
-                        {userPos && locations.length > 0 && (
-                            <div style={{ marginTop: '1em', marginBottom: '1em' }}>
-                                <h3 style={{ marginBottom: '0.5em', fontSize: '0.95em' }}>Posisi Anda & Lokasi Absensi</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                {/* Left Column - Camera & Controls */}
+                <div className="lg:col-span-3 space-y-4">
+                    <div className="glass-card p-5">
+                        {hasFace === false && (
+                            <StatusAlert type="warning">
+                                Anda belum mendaftarkan wajah.{' '}
+                                <a href="/face-register" className="underline ml-1">
+                                    Daftar Wajah
+                                </a>
+                            </StatusAlert>
+                        )}
+                        {noLocations && (
+                            <StatusAlert type="warning">
+                                Admin belum menyimpan lokasi absensi. Absensi tidak dapat dilakukan sampai lokasi diatur.
+                            </StatusAlert>
+                        )}
+
+                        {modelsLoaded ? (
+                            <>
+                                {/* Camera */}
+                                <div className="relative rounded-2xl overflow-hidden ">
+                                    <Webcam
+                                        ref={webcamRef}
+                                        screenshotFormat="image/jpeg"
+                                        videoConstraints={{ width: 640, height: 480, facingMode: "user" }}
+                                        className="w-full aspect-[4/3] object-cover"
+                                        onUserMedia={() => setCameraReady(true)}
+                                    />
+                                    {!cameraReady && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60">
+                                            <div className="flex flex-col items-center gap-2">
+                                                <FiLoader className="animate-spin text-indigo-400" size={24} />
+                                                <span style={{ color: 'var(--text-muted)' }} className="text-sm">Mengaktifkan kamera...</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* Camera overlay */}
+                                    <div className="absolute inset-0 pointer-events-none border-2 border-transparent rounded-2xl ring-1 ring-indigo-500/10" />
+                                </div>
+
+                                {/* Shift & Controls */}
+                                <div className="space-y-4 mt-4">
+                                    <div>
+                                        <label className="input-label">Shift</label>
+                                        <select
+                                            value={selectedShift}
+                                            onChange={e => setSelectedShift(e.target.value)}
+                                            className="input-field"
+                                        >
+                                            {shifts.map(s => (
+                                                <option key={s.id} value={s.id}>
+                                                    {s.name} ({s.start_time} - {s.end_time})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => handleAbsen('clock-in')}
+                                            disabled={disableButtons}
+                                            className="btn-primary flex-1 py-3 text-sm"
+                                        >
+                                            {processing ? (
+                                                <><FiLoader className="animate-spin" size={16} /> Memproses...</>
+                                            ) : (
+                                                <><FiCamera size={16} /> Clock In</>
+                                            )}
+                                        </button>
+                                        <button
+                                            onClick={() => handleAbsen('clock-out')}
+                                            disabled={disableButtons}
+                                            className="btn-success flex-1 py-3 text-sm"
+                                        >
+                                            {processing ? (
+                                                <><FiLoader className="animate-spin" size={16} /> Memproses...</>
+                                            ) : (
+                                                <><FiCamera size={16} /> Clock Out</>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {status && (
+                                    <div className="mt-4">
+                                        <StatusAlert type={statusType}>{status}</StatusAlert>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-16 gap-3">
+                                <FiLoader className="animate-spin text-indigo-400" size={32} />
+                                <p className="text-slate-400 text-sm">Memuat model pengenalan wajah...</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Right Column - Map */}
+                <div className="lg:col-span-2 space-y-4">
+                    <div className="glass-card p-5">
+                        <div className="flex items-center gap-2 mb-3">
+                            <FiMapPin className="text-indigo-400" size={16} />
+                            <h2 style={{ color: 'var(--text-heading)' }} className="text-sm font-semibold">Lokasi Absensi</h2>
+                        </div>
+                        {userPos && locations.length > 0 ? (
+                            <div className="rounded-xl overflow-hidden border border-slate-700/30">
                                 <MapContainer
                                     center={[userPos.latitude, userPos.longitude]}
                                     zoom={16}
-                                    style={{ height: 250, borderRadius: 8, width: '100%', maxWidth: 480 }}
+                                    className="w-full h-[300px]"
+                                    zoomControl={false}
                                 >
                                     <TileLayer
                                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -224,29 +345,45 @@ const Attendance = () => {
                                     ))}
                                 </MapContainer>
                             </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-[200px] rounded-xl ">
+                                <div className="text-center">
+                                    <FiMapPin className="mx-auto text-slate-500 mb-2" size={24} />
+                                    <p className="text-sm text-slate-500">
+                                        {locationsLoaded ? 'Tidak ada lokasi tersedia' : 'Memuat peta...'}
+                                    </p>
+                                </div>
+                            </div>
                         )}
+                    </div>
 
-                        <div className="form-group mt-1" style={{ maxWidth: 300 }}>
-                            <label>Shift</label>
-                            <select value={selectedShift} onChange={e => setSelectedShift(e.target.value)}>
-                                {shifts.map(s => (
-                                    <option key={s.id} value={s.id}>{s.name} ({s.start_time} - {s.end_time})</option>
-                                ))}
-                            </select>
+                    {/* Info card */}
+                    <div className="glass-card p-5">
+                        <h2 className="text-sm font-semibold text-white mb-3">Informasi</h2>
+                        <div className="space-y-2.5">
+                            <div className="flex items-center justify-between text-sm">
+                                <span style={{ color: 'var(--text-muted)' }}>Shift tersedia</span>
+                                <span style={{ color: 'var(--text-primary)' }} className="font-medium">{shifts.length}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                                <span style={{ color: 'var(--text-muted)' }}>Lokasi absensi</span>
+                                <span style={{ color: 'var(--text-primary)' }} className="font-medium">{locations.length}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                                <span style={{ color: 'var(--text-muted)' }}>Status kamera</span>
+                                <span className={`font-medium ${cameraReady ? 'text-emerald-400' : 'text-amber-400'}`}>
+                                    {cameraReady ? 'Aktif' : 'Menunggu...'}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                                <span style={{ color: 'var(--text-muted)' }}>Face model</span>
+                                <span className={`font-medium ${modelsLoaded ? 'text-emerald-400' : 'text-amber-400'}`}>
+                                    {modelsLoaded ? 'Siap' : 'Memuat...'}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex gap-1 mt-1">
-                            <button onClick={() => handleAbsen('clock-in')} className="btn-primary" disabled={disableButtons}>
-                                {processing ? 'Memproses...' : 'Clock In'}
-                            </button>
-                            <button onClick={() => handleAbsen('clock-out')} className="btn-success" disabled={disableButtons}>
-                                {processing ? 'Memproses...' : 'Clock Out'}
-                            </button>
-                        </div>
-                    </>
-                ) : (
-                    <p>Loading model...</p>
-                )}
-                {status && <p className="mt-1" style={{ fontWeight: 500 }}>{status}</p>}
+                    </div>
+                </div>
             </div>
         </div>
     );
