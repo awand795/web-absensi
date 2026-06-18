@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FiLock, FiMail, FiLoader, FiLogIn, FiArrowLeft, FiSun, FiMoon, FiUserCheck } from 'react-icons/fi';
+import { FiLock, FiMail, FiLoader, FiLogIn, FiArrowLeft, FiSun, FiMoon } from 'react-icons/fi';
 import { useTheme } from '../lib/ThemeContext';
 import api from '../api/axios';
 import { loadModels } from '../lib/faceModels';
@@ -37,25 +37,6 @@ const Login = () => {
             setLoading(false);
         }
     };
-
-    const demoAccounts = [
-        {
-            label: 'Admin',
-            email: 'budi@example.com',
-            pass: 'budi1234',
-            gradient: 'var(--gradient-primary)',
-            letter: 'B',
-            color: '#d45a4a'
-        },
-        {
-            label: 'Karyawan',
-            email: 'siti@example.com',
-            pass: 'siti1234',
-            gradient: 'linear-gradient(135deg, #7d9b76, #6b8d64)',
-            letter: 'S',
-            color: '#7d9b76'
-        }
-    ];
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: 'var(--bg-page)' }}>
@@ -137,33 +118,6 @@ const Login = () => {
                                 style={{ color: 'var(--text-muted)' }}>
                                 Lupa Password?
                             </Link>
-                        </div>
-
-                        {/* Demo Accounts */}
-                        <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
-                                <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>AKUN DEMO</span>
-                                <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
-                            </div>
-                            <div className="space-y-2">
-                                {demoAccounts.map((acc, i) => (
-                                    <button key={i} type="button"
-                                        onClick={() => { setEmail(acc.email); setPassword(acc.pass); setError(''); }}
-                                        className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover-border"
-                                        style={{ background: 'var(--bg-page)', border: '1px solid var(--border-subtle)' }}>
-                                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                                            style={{ background: acc.gradient }}>
-                                            {acc.letter}
-                                        </div>
-                                        <div className="text-left flex-1 min-w-0">
-                                            <div className="font-medium" style={{ color: 'var(--text-primary)' }}>{acc.label}</div>
-                                            <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{acc.email}</div>
-                                        </div>
-                                        <FiUserCheck size={16} style={{ color: acc.color }} />
-                                    </button>
-                                ))}
-                            </div>
                         </div>
 
                         <div className="text-center">
