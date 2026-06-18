@@ -20,13 +20,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (env('VERCEL')) {
-            config(['view.compiled' => '/tmp/storage/framework/views']);
-            config(['logging.default' => 'stderr']);
+            // Force configurations for Serverless environment
+            config([
+                'view.compiled' => '/tmp/storage/framework/views',
+                'session.driver' => 'cookie',
+                'cache.default' => 'array',
+                'logging.default' => 'stderr',
+            ]);
             
-            // Ensure the directory exists
-            if (!is_dir('/tmp/storage/framework/views')) {
-                mkdir('/tmp/storage/framework/views', 0755, true);
-            }
+            // Fix for trusted proxies on Vercel
+            $this->app->make(\Illuminate\Http\Request::class)->headers->set('X-Forwarded-Proto', 'https');
         }
     }
 }

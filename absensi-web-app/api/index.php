@@ -3,12 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
-// 1. Force raw error display for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// 2. Setup folder storage di /tmp (Vercel)
+// Create storage directories in /tmp for Vercel
 $storageRoot = '/tmp/storage';
 $storageDirs = [
     $storageRoot . '/framework/views',
@@ -22,37 +17,15 @@ foreach ($storageDirs as $dir) {
 
 require __DIR__ . '/../vendor/autoload.php';
 
-try {
-    /** @var Application $app */
-    $app = require_once __DIR__ . '/../bootstrap/app.php';
-    
-    // Set storage path before handling request
-    $app->useStoragePath($storageRoot);
+/** @var Application $app */
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
-    // Ensure core configs are set for serverless
-    config([
-        'view.compiled' => $storageRoot . '/framework/views',
-        'session.driver' => 'cookie',
-        'cache.default' => 'array',
-        'logging.default' => 'stderr',
-    ]);
+// Set storage path
+$app->useStoragePath($storageRoot);
 
-    // Force request to be JSON to avoid view rendering on errors
-    $request = Request::capture();
-    $request->headers->set('Accept', 'application/json');
+// Handle request
+$request = Request::capture();
+// Force JSON for API
+$request->headers->set('Accept', 'application/json');
 
-    $app->handleRequest($request);
-
-} catch (\Throwable $e) {
-    // Return a clean JSON error even if Laravel fails
-    header('Content-Type: application/json');
-    http_response_code(500);
-    echo json_encode([
-        'error' => true,
-        'message' => $e->getMessage(),
-        'exception' => get_class($e),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-        'trace' => explode("\n", $e->getTraceAsString())
-    ], JSON_PRETTY_PRINT);
-}
+$app->handleRequest($request);
