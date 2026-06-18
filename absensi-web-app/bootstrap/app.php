@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+        // CORS is handled manually in api/index.php (before Laravel bootstrap)
+        // to ensure preflight OPTIONS requests work on Vercel serverless.
+        // Do NOT append HandleCors here — it would duplicate the headers.
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
