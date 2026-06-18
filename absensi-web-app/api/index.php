@@ -28,6 +28,18 @@ try {
     // Set storage path
     $app->useStoragePath($storageRoot);
 
+    // Pre-set VIEW_COMPILED_PATH so config/view.php picks it up via env() instead
+    // of calling realpath() on a path that might not exist yet during config loading.
+    $_ENV['VIEW_COMPILED_PATH'] = $storageRoot . '/framework/views';
+
+    // Register ViewServiceProvider early so the 'view' binding exists in the container
+    // before kernel bootstrap runs. The exception handler depends on 'view' via
+    // response()->json(), and without this it crashes with "Target class [view] does
+    // not exist" if an exception occurs before RegisterProviders bootstrapper runs.
+    if (!$app->providerIsLoaded(\Illuminate\View\ViewServiceProvider::class)) {
+        $app->register(\Illuminate\View\ViewServiceProvider::class);
+    }
+
     // Handle request
     $request = Request::capture();
     // Force JSON for API
