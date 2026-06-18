@@ -35,6 +35,22 @@ const AttendanceReport = () => {
         finally { setLoading(false); }
     };
 
+    const handleDownload = async (url, filename) => {
+        try {
+            const res = await api.get(url, { responseType: 'blob' });
+            const blob = new Blob([res.data]);
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        } catch (err) {
+            console.error('Download failed:', err);
+        }
+    };
+
     useEffect(() => { fetchReport(defaults.start, defaults.end); }, []);
 
     return (
@@ -79,24 +95,22 @@ const AttendanceReport = () => {
                         Cari
                     </button>
                     <div className="flex gap-2 ml-auto">
-                        <a href={`http://localhost:8000/api/export/csv?month=${new Date(startDate).getMonth() + 1}&year=${new Date(startDate).getFullYear()}`}
+                        <button onClick={() => handleDownload(`/export/csv?month=${new Date(startDate).getMonth() + 1}&year=${new Date(startDate).getFullYear()}`, `laporan-${new Date(startDate).getMonth() + 1}-${new Date(startDate).getFullYear()}.csv`)}
                             className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
                             style={{ color: '#7d9b76', background: 'rgba(125,155,118,0.08)' }}
                             onMouseOver={e => e.target.style.background = 'rgba(125,155,118,0.15)'}
-                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}
-                            target="_blank" rel="noopener noreferrer">
+                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}>
                             <FiFileText size={14} />
                             Export CSV
-                        </a>
-                        <a href={`http://localhost:8000/api/export/excel?month=${new Date(startDate).getMonth() + 1}&year=${new Date(startDate).getFullYear()}`}
+                        </button>
+                        <button onClick={() => handleDownload(`/export/excel?month=${new Date(startDate).getMonth() + 1}&year=${new Date(startDate).getFullYear()}`, `laporan-${new Date(startDate).getMonth() + 1}-${new Date(startDate).getFullYear()}.xlsx`)}
                             className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
                             style={{ color: '#d45a4a', background: 'rgba(212,90,74,0.08)' }}
                             onMouseOver={e => e.target.style.background = 'rgba(212,90,74,0.15)'}
-                            onMouseOut={e => e.target.style.background = 'rgba(212,90,74,0.08)'}
-                            target="_blank" rel="noopener noreferrer">
+                            onMouseOut={e => e.target.style.background = 'rgba(212,90,74,0.08)'}>
                             <FiDownload size={14} />
                             Export Excel
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -62,6 +62,22 @@ const AttendanceHistory = () => {
         return 'badge';
     };
 
+    const handleDownload = async (url, filename) => {
+        try {
+            const res = await api.get(url, { responseType: 'blob' });
+            const blob = new Blob([res.data]);
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        } catch (err) {
+            console.error('Download failed:', err);
+        }
+    };
+
     const presentCount = records.filter(r => {
         const s = (r.status || '').toLowerCase();
         return s === 'hadir' || s === 'present' || (r.clock_in && r.clock_in !== '-');
@@ -126,15 +142,14 @@ const AttendanceHistory = () => {
                             onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
                             <FiGrid size={18} />
                         </Link>
-                        <a href={`http://localhost:8000/api/export/csv?month=${month}&year=${year}`}
+                        <button onClick={() => handleDownload(`/export/csv?month=${month}&year=${year}`, `laporan-${month}-${year}.csv`)}
                             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200"
                             style={{ color: '#7d9b76', background: 'rgba(125,155,118,0.08)' }}
                             onMouseOver={e => e.target.style.background = 'rgba(125,155,118,0.15)'}
-                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}
-                            target="_blank" rel="noopener noreferrer">
+                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}>
                             <FiDownload size={14} />
                             Export CSV
-                        </a>
+                        </button>
                         <button
                             onClick={nextMonth}
                             className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
