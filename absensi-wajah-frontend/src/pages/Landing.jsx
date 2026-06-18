@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   FiCamera, FiMapPin, FiClock, FiFileText, FiBarChart2,
   FiUsers, FiChevronRight, FiArrowRight, FiSun, FiMoon,
-  FiCheck, FiStar
+  FiCheck, FiStar, FiInfo
 } from 'react-icons/fi';
 import { useTheme } from '../lib/ThemeContext';
 
@@ -99,6 +99,11 @@ const Landing = () => {
                                 onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-secondary)'; }}>
                                 Cara Kerja
                             </a>
+                            <Link to="/tentang" className="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200" style={{ color: 'var(--text-secondary)' }}
+                                onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
+                                onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-secondary)'; }}>
+                                Tentang
+                            </Link>
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -278,6 +283,7 @@ const Landing = () => {
                         <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-muted)' }}>
                             <a href="#features" style={{ color: 'inherit' }}>Fitur</a>
                             <a href="#how-it-works" style={{ color: 'inherit' }}>Cara Kerja</a>
+                            <Link to="/tentang" style={{ color: 'inherit' }}>Tentang</Link>
                             <span>© 2026 Bikin-Absensi</span>
                         </div>
                     </div>

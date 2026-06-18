@@ -3,7 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   FiHome, FiClock, FiCamera, FiFileText, FiCalendar,
   FiUsers, FiSettings, FiLogOut, FiMapPin, FiBarChart2,
-  FiMenu, FiX, FiChevronDown, FiUserCheck, FiSun, FiMoon
+  FiMenu, FiX, FiChevronDown, FiUserCheck, FiSun, FiMoon,
+  FiInfo
 } from 'react-icons/fi';
 import { useTheme } from '../lib/ThemeContext';
 
@@ -28,6 +29,7 @@ const Navbar = () => {
         { to: '/face-register', icon: <FiCamera size={18} />, label: 'Daftar Wajah' },
         { to: '/history', icon: <FiCalendar size={18} />, label: 'Riwayat' },
         { to: '/leave', icon: <FiFileText size={18} />, label: 'Izin' },
+        { to: '/tentang', icon: <FiInfo size={18} />, label: 'Tentang' },
     ];
 
     const adminItems = [

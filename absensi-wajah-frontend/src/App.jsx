@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { lazy, Suspense } from "react";
 import Login from './pages/login';
 import Landing from './pages/Landing';
+import Tentang from './pages/Tentang';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 
@@ -29,7 +30,7 @@ function LoadingFallback() {
 
 function AppLayout() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/' || location.pathname === '/login';
+  const hideNavbar = location.pathname === '/' || location.pathname === '/login' || location.pathname === '/tentang';
 
   return (
     <>
@@ -38,6 +39,7 @@ function AppLayout() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/tentang" element={<Tentang />} />
           <Route path="/attendance" element={<PrivateRoute><Attendance /></PrivateRoute>} />
           <Route path="/face-register" element={<PrivateRoute><FaceRegister /></PrivateRoute>} />
           <Route path="/history" element={<PrivateRoute><AttendanceHistory /></PrivateRoute>} />
