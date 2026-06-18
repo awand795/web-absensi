@@ -85,7 +85,7 @@ const Landing = () => {
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
                                 <FiClock className="text-white" size={17} />
                             </div>
-                            <span className="font-bold text-lg" style={{ color: 'var(--text-heading)' }}>Absensi</span>
+                            <span className="font-bold text-lg" style={{ color: 'var(--text-heading)' }}>Bikin-Absensi</span>
                         </div>
 
                         <div className="hidden md:flex items-center gap-1">
@@ -144,7 +144,7 @@ const Landing = () => {
 
                         <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6"
                             style={{ color: 'var(--text-heading)' }}>
-                            Absensi Wajah{' '}
+                            Bikin-Absensi{' '}
                             <span style={{ background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                                 Modern & Cerdas
                             </span>
@@ -273,12 +273,12 @@ const Landing = () => {
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
                                 <FiClock className="text-white" size={14} />
                             </div>
-                            <span className="font-semibold text-sm" style={{ color: 'var(--text-heading)' }}>Absensi</span>
+                            <span className="font-semibold text-sm" style={{ color: 'var(--text-heading)' }}>Bikin-Absensi</span>
                         </div>
                         <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-muted)' }}>
                             <a href="#features" style={{ color: 'inherit' }}>Fitur</a>
                             <a href="#how-it-works" style={{ color: 'inherit' }}>Cara Kerja</a>
-                            <span>© 2026 Absensi</span>
+                            <span>© 2026 Bikin-Absensi</span>
                         </div>
                     </div>
                 </div>

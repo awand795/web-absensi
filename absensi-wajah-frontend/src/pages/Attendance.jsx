@@ -205,7 +205,7 @@ const Attendance = () => {
                     <FiClock className="text-white" size={20} />
                 </div>
                 <div>
-                    <h1 style={{ color: 'var(--text-heading)' }} className="text-xl font-bold">Absensi</h1>
+                    <h1 style={{ color: 'var(--text-heading)' }} className="text-xl font-bold">Bikin-Absensi</h1>
                     <p style={{ color: 'var(--text-muted)' }} className="text-sm">Lakukan absensi dengan verifikasi wajah</p>
                 </div>
             </div>

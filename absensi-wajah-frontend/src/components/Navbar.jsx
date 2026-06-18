@@ -76,7 +76,7 @@ const Navbar = () => {
                             <FiClock className="text-white" size={18} />
                         </div>
                         <span className="font-bold text-lg hidden sm:block" style={{ color: 'var(--text-heading)' }}>
-                            Absensi
+                            Bikin-Absensi
                         </span>
                     </Link>
 

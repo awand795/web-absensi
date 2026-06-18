@@ -83,7 +83,7 @@ const Login = () => {
                         style={{ background: 'var(--gradient-primary)', boxShadow: '0 4px 14px rgba(212, 90, 74, 0.25)' }}>
                         <FiLock className="text-white" size={30} />
                     </div>
-                    <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Sistem Absensi</h1>
+                    <h1 className="text-2xl font-bold" style={{ color: 'var(--text-heading)' }}>Bikin-Absensi</h1>
                     <p className="mt-1 text-sm" style={{ color: 'var(--text-muted)' }}>Masuk dengan akun Anda</p>
                 </div>
 

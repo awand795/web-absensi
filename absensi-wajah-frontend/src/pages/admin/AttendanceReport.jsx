@@ -44,7 +44,7 @@ const AttendanceReport = () => {
                     <FiBarChart2 className="text-white" size={20} />
                 </div>
                 <div>
-                    <h1 className="text-xl font-bold text-white">Laporan Absensi</h1>
+                    <h1 className="text-xl font-bold text-white">Laporan</h1>
                     <p className="text-sm text-slate-400">Laporan absensi global</p>
                 </div>
             </div>
