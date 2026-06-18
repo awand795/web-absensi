@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
-import { FiCamera, FiMapPin, FiClock, FiAlertCircle, FiInfo, FiCheckCircle, FiLoader } from 'react-icons/fi';
+import { FiCamera, FiMapPin, FiClock, FiAlertCircle, FiInfo, FiCheckCircle, FiLoader, FiCoffee, FiPlay, FiSquare } from 'react-icons/fi';
 import api from '../api/axios';
 import { loadModels, detectFace } from '../lib/faceModels';
 import { MapContainer, TileLayer, Marker, Circle, Popup } from 'react-leaflet';
@@ -51,6 +51,18 @@ const Attendance = () => {
     const [locationsLoaded, setLocationsLoaded] = useState(false);
     const [userPos, setUserPos] = useState(null);
     const [cameraReady, setCameraReady] = useState(false);
+    const [breakStatus, setBreakStatus] = useState({ is_on_break: false, break_minutes: 0 });
+
+    const fetchBreakStatus = async () => {
+        try { const res = await api.get('/break/status'); setBreakStatus(res.data); }
+        catch (err) { /* ignore */ }
+    };
+
+    useEffect(() => {
+        fetchBreakStatus();
+        const interval = setInterval(fetchBreakStatus, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         loadModels().then(() => setModelsLoaded(true));
@@ -341,6 +353,40 @@ const Attendance = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Break Tracker */}
+                    <div className="glass-card p-5">
+                        <div className="flex items-center gap-2 mb-3">
+                            <FiCoffee style={{ color: '#d4a853' }} size={16} />
+                            <h2 style={{ color: 'var(--text-heading)' }} className="text-sm font-semibold">Istirahat</h2>
+                        </div>
+                        <div className="space-y-3">
+                            {breakStatus.is_on_break ? (
+                                <>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <div className="w-2 h-2 rounded-full bg-[#d4a853] animate-pulse" />
+                                        <span style={{ color: '#d4a853' }}>Sedang istirahat</span>
+                                    </div>
+                                    <button onClick={async () => { try { await api.post('/break/end'); fetchBreakStatus(); } catch (err) { alert('Gagal: ' + (err.response?.data?.message || err.message)); } }}
+                                        className="btn-secondary w-full text-sm">
+                                        <FiSquare size={14} /> Akhiri Istirahat
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span style={{ color: 'var(--text-muted)' }}>Total istirahat hari ini</span>
+                                        <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{breakStatus.break_minutes} menit</span>
+                                    </div>
+                                    <button onClick={async () => { try { await api.post('/break/start'); fetchBreakStatus(); } catch (err) { alert('Gagal: ' + (err.response?.data?.message || err.message)); } }}
+                                        className="btn-primary w-full text-sm">
+                                        <FiPlay size={14} /> Mulai Istirahat
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

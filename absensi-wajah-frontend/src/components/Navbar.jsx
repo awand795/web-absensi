@@ -4,7 +4,7 @@ import {
   FiHome, FiClock, FiCamera, FiFileText, FiCalendar,
   FiUsers, FiSettings, FiLogOut, FiMapPin, FiBarChart2,
   FiMenu, FiX, FiChevronDown, FiUserCheck, FiSun, FiMoon,
-  FiInfo, FiUser, FiBell, FiGrid
+  FiInfo, FiUser, FiBell, FiGrid, FiRefreshCw, FiMail
 } from 'react-icons/fi';
 import { useTheme } from '../lib/ThemeContext';
 
@@ -29,6 +29,7 @@ const Navbar = () => {
         { to: '/face-register', icon: <FiCamera size={18} />, label: 'Daftar Wajah' },
         { to: '/history', icon: <FiCalendar size={18} />, label: 'Riwayat' },
         { to: '/leave', icon: <FiFileText size={18} />, label: 'Izin' },
+        { to: '/shift-swaps', icon: <FiRefreshCw size={18} />, label: 'Swap Shift' },
         { to: '/calendar', icon: <FiGrid size={18} />, label: 'Kalender' },
         { to: '/notifications', icon: <FiBell size={18} />, label: 'Notifikasi' },
         { to: '/profile', icon: <FiUser size={18} />, label: 'Profil' },
@@ -42,29 +43,15 @@ const Navbar = () => {
         { to: '/admin/leave', icon: <FiUserCheck size={18} />, label: 'Approval Izin' },
         { to: '/admin/locations', icon: <FiMapPin size={18} />, label: 'Lokasi' },
         { to: '/admin/report', icon: <FiBarChart2 size={18} />, label: 'Laporan' },
+        { to: '/admin/overtime', icon: <FiClock size={18} />, label: 'Lembur' },
+        { to: '/admin/email', icon: <FiMail size={18} />, label: 'Email' },
     ];
 
     const NavLink = ({ to, icon, label, onClick }) => (
         <Link
             to={to}
             onClick={onClick}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200"
-            style={{
-                color: isActive(to) ? '#d45a4a' : 'var(--text-secondary)',
-                background: isActive(to) ? 'rgba(212, 90, 74, 0.08)' : 'transparent'
-            }}
-            onMouseOver={e => {
-                if (!isActive(to)) {
-                    e.target.style.background = 'var(--bg-hover)';
-                    e.target.style.color = 'var(--text-primary)';
-                }
-            }}
-            onMouseOut={e => {
-                if (!isActive(to)) {
-                    e.target.style.background = 'transparent';
-                    e.target.style.color = 'var(--text-secondary)';
-                }
-            }}
+            className={`nav-link ${isActive(to) ? 'active' : ''}`}
         >
             {icon}
             <span>{label}</span>
@@ -92,12 +79,8 @@ const Navbar = () => {
                         ))}
                         {isAdmin && (
                             <div className="relative group ml-1">
-                                <div
-                                    className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200"
-                                    style={{ color: 'var(--text-secondary)' }}
-                                    onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
-                                    onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-secondary)'; }}
-                                >
+                                <div className="flex items-center gap-1 px-3.5 py-2 rounded-xl text-sm font-medium cursor-pointer hover-bg"
+                                    style={{ color: 'var(--text-secondary)' }}>
                                     <FiSettings size={16} />
                                     <span>Admin</span>
                                     <FiChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-200" />
@@ -108,23 +91,7 @@ const Navbar = () => {
                                         <Link
                                             key={item.to}
                                             to={item.to}
-                                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-200"
-                                            style={{
-                                                color: isActive(item.to) ? '#d45a4a' : 'var(--text-secondary)',
-                                                background: isActive(item.to) ? 'rgba(212, 90, 74, 0.08)' : 'transparent'
-                                            }}
-                                            onMouseOver={e => {
-                                                if (!isActive(item.to)) {
-                                                    e.target.style.background = 'var(--bg-hover)';
-                                                    e.target.style.color = 'var(--text-primary)';
-                                                }
-                                            }}
-                                            onMouseOut={e => {
-                                                if (!isActive(item.to)) {
-                                                    e.target.style.background = 'transparent';
-                                                    e.target.style.color = 'var(--text-secondary)';
-                                                }
-                                            }}
+                                            className={`nav-link ${isActive(item.to) ? 'active' : ''}`}
                                         >
                                             {item.icon}
                                             <span>{item.label}</span>
@@ -138,10 +105,8 @@ const Navbar = () => {
                     {/* Desktop Right */}
                     <div className="hidden lg:flex items-center gap-2">
                         <button onClick={toggleTheme}
-                            className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
-                            style={{ color: 'var(--text-muted)' }}
-                            onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
-                            onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                            className="flex items-center justify-center w-9 h-9 rounded-xl hover-icon"
+                            style={{ color: 'var(--text-muted)' }}>
                             {theme === 'dark' ? <FiSun size={16} /> : <FiMoon size={16} />}
                         </button>
                         <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl" style={{ border: '1px solid var(--border-subtle)' }}>
@@ -151,10 +116,8 @@ const Navbar = () => {
                             <span className="text-sm max-w-[120px] truncate" style={{ color: 'var(--text-secondary)' }}>{user.name}</span>
                         </div>
                         <button onClick={handleLogout}
-                            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200"
-                            style={{ color: 'var(--text-muted)' }}
-                            onMouseOver={e => { e.target.style.background = 'rgba(201, 74, 74, 0.08)'; e.target.style.color = '#c94a4a'; }}
-                            onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium hover-danger"
+                            style={{ color: 'var(--text-muted)' }}>
                             <FiLogOut size={16} />
                             <span>Logout</span>
                         </button>
@@ -162,10 +125,8 @@ const Navbar = () => {
 
                     {/* Mobile Menu Button */}
                     <button onClick={() => setMobileOpen(!mobileOpen)}
-                        className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
-                        style={{ color: 'var(--text-secondary)' }}
-                        onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; }}
-                        onMouseOut={e => { e.target.style.background = 'transparent'; }}>
+                        className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl hover-bg"
+                        style={{ color: 'var(--text-secondary)' }}>
                         {mobileOpen ? <FiX size={22} /> : <FiMenu size={22} />}
                     </button>
                 </div>
@@ -176,10 +137,8 @@ const Navbar = () => {
                 <div className="lg:hidden" style={{ borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-card)' }}>
                     <div className="px-4 py-3 space-y-1">
                         <button onClick={toggleTheme}
-                            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200"
-                            style={{ color: 'var(--text-secondary)' }}
-                            onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
-                            onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-secondary)'; }}>
+                            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm font-medium hover-bg"
+                            style={{ color: 'var(--text-secondary)' }}>
                             {theme === 'dark' ? <FiSun size={16} /> : <FiMoon size={16} />}
                             <span>{theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}</span>
                         </button>
@@ -195,10 +154,8 @@ const Navbar = () => {
                             <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{user.name}</span>
                         </div>
                         <button onClick={handleLogout}
-                            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200"
-                            style={{ color: 'var(--text-muted)' }}
-                            onMouseOver={e => { e.target.style.background = 'rgba(201, 74, 74, 0.08)'; e.target.style.color = '#c94a4a'; }}
-                            onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                            className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-sm font-medium hover-danger"
+                            style={{ color: 'var(--text-muted)' }}>
                             <FiLogOut size={16} />
                             <span>Logout</span>
                         </button>

@@ -79,8 +79,8 @@ const Tentang = () => {
                     <a href="https://bikinsite.vercel.app" target="_blank" rel="noopener noreferrer"
                         className="rounded-2xl p-6 flex items-center gap-4 transition-all duration-300 group"
                         style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
-                        onMouseOver={e => { e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                        onMouseOut={e => { e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+                        className="rounded-2xl p-6 flex items-center gap-4 transition-all duration-300 group hover-card"
+                        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(212, 90, 74, 0.1)', color: '#d45a4a' }}>
                             <FiGlobe size={24} />
                         </div>
@@ -94,8 +94,8 @@ const Tentang = () => {
                     <a href="https://instagram.com/bikinsite.id" target="_blank" rel="noopener noreferrer"
                         className="rounded-2xl p-6 flex items-center gap-4 transition-all duration-300 group"
                         style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
-                        onMouseOver={e => { e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                        onMouseOut={e => { e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+                        className="rounded-2xl p-6 flex items-center gap-4 transition-all duration-300 group hover-card"
+                        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, rgba(228, 64, 95, 0.1), rgba(193, 53, 132, 0.1))', color: '#e4405f' }}>
                             <FiInstagram size={24} />
                         </div>
@@ -131,7 +131,7 @@ const Tentang = () => {
 
                 {/* Footer */}
                 <div className="text-center mt-12 text-sm" style={{ color: 'var(--text-muted)' }}>
-                    <p>Powered by <a href="https://bikinsite.vercel.app" target="_blank" rel="noopener noreferrer" className="font-semibold transition-colors" style={{ color: 'var(--text-heading)' }} onMouseOver={e => e.target.style.color = '#d45a4a'} onMouseOut={e => e.target.style.color = 'var(--text-heading)'}>Bikinsite</a></p>
+                    <p>Powered by <a href="https://bikinsite.vercel.app" target="_blank" rel="noopener noreferrer" className="font-semibold transition-colors hover-text" style={{ color: 'var(--text-heading)' }}>Bikinsite</a></p>
                     <p className="mt-1">© 2026 Bikin-Absensi. All rights reserved.</p>
                 </div>
             </div>

@@ -148,9 +148,8 @@ const ForgotPassword = () => {
 
                                     <button type="button" onClick={() => setStep(1)}
                                         className="text-sm w-full text-center py-2 transition-colors"
-                                        style={{ color: 'var(--text-muted)' }}
-                                        onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
-                                        onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
+                                        style={{ color: 'var(--text-muted)' }}                                    className="text-sm w-full text-center py-2 hover-text"
+                                    style={{ color: 'var(--text-muted)' }}>
                                         Ganti email
                                     </button>
 
@@ -174,10 +173,10 @@ const ForgotPassword = () => {
                         <Link to="/login"
                             className="inline-flex items-center gap-1.5 text-sm transition-colors"
                             style={{ color: 'var(--text-muted)' }}
-                            onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
-                            onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
-                            <FiArrowLeft size={14} />
-                            Kembali ke Login
+                        className="inline-flex items-center gap-1.5 text-sm hover-text"
+                        style={{ color: 'var(--text-muted)' }}>
+                        <FiArrowLeft size={14} />
+                        Kembali ke Login
                         </Link>
                     </div>
                 </div>

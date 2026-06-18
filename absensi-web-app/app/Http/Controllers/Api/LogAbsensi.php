@@ -204,6 +204,58 @@ class LogAbsensi extends Controller
         ], 200);
     }
 
+    // === Overtime Approval ===
+    public function pendingOvertime()
+    {
+        $logs = Log_Absensi::with(['user:id,name', 'shift:id,name,start_time,end_time'])
+            ->whereNotNull('overtime_minutes')
+            ->where('overtime_minutes', '>', 0)
+            ->whereNull('overtime_status')
+            ->orderBy('date', 'desc')
+            ->get();
+        return response()->json($logs);
+    }
+
+    public function approveOvertime($id)
+    {
+        $log = Log_Absensi::findOrFail($id);
+        $log->update([
+            'overtime_status' => 'approved',
+            'overtime_approved_by' => auth()->id(),
+            'overtime_approved_at' => now(),
+        ]);
+
+        Notification::create([
+            'user_id' => $log->user_id,
+            'type' => 'success',
+            'title' => 'Lembur Disetujui',
+            'message' => "Lembur Anda pada {$log->date} selama " . floor($log->overtime_minutes / 60) . "j " . ($log->overtime_minutes % 60) . "m telah disetujui.",
+            'link' => '/history',
+        ]);
+
+        return response()->json(['message' => 'Lembur disetujui', 'data' => $log]);
+    }
+
+    public function rejectOvertime($id)
+    {
+        $log = Log_Absensi::findOrFail($id);
+        $log->update([
+            'overtime_status' => 'rejected',
+            'overtime_approved_by' => auth()->id(),
+            'overtime_approved_at' => now(),
+        ]);
+
+        Notification::create([
+            'user_id' => $log->user_id,
+            'type' => 'error',
+            'title' => 'Lembur Ditolak',
+            'message' => "Lembur Anda pada {$log->date} tidak disetujui.",
+            'link' => '/history',
+        ]);
+
+        return response()->json(['message' => 'Lembur ditolak', 'data' => $log]);
+    }
+
     private function haversine($lat1, $lng1, $lat2, $lng2){
         $r = 6371000;
         $dLat = deg2rad($lat2 - $lat1);

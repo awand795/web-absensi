@@ -68,10 +68,8 @@ const Login = () => {
             {/* Theme Toggle */}
             <div className="fixed top-4 right-4 z-50">
                 <button onClick={toggleTheme}
-                    className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200"
-                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}
-                    onMouseOver={e => { e.target.style.color = 'var(--text-primary)'; e.target.style.borderColor = 'var(--border-strong)'; }}
-                    onMouseOut={e => { e.target.style.color = 'var(--text-muted)'; e.target.style.borderColor = 'var(--border-subtle)'; }}>
+                    className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 hover-border hover-text"
+                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
                     {theme === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
                 </button>
             </div>
@@ -135,10 +133,8 @@ const Login = () => {
 
                         <div className="text-center">
                             <Link to="/forgot-password"
-                                className="inline-flex items-center gap-1.5 text-sm transition-colors"
-                                style={{ color: 'var(--text-muted)' }}
-                                onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
-                                onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
+                                className="inline-flex items-center gap-1.5 text-sm hover-text"
+                                style={{ color: 'var(--text-muted)' }}>
                                 Lupa Password?
                             </Link>
                         </div>
@@ -154,10 +150,8 @@ const Login = () => {
                                 {demoAccounts.map((acc, i) => (
                                     <button key={i} type="button"
                                         onClick={() => { setEmail(acc.email); setPassword(acc.pass); setError(''); }}
-                                        className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
-                                        style={{ background: 'var(--bg-page)', border: '1px solid var(--border-subtle)' }}
-                                        onMouseOver={e => { e.target.style.borderColor = 'var(--border-strong)'; }}
-                                        onMouseOut={e => { e.target.style.borderColor = 'var(--border-subtle)'; }}>
+                                        className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 hover-border"
+                                        style={{ background: 'var(--bg-page)', border: '1px solid var(--border-subtle)' }}>
                                         <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                                             style={{ background: acc.gradient }}>
                                             {acc.letter}
@@ -174,10 +168,8 @@ const Login = () => {
 
                         <div className="text-center">
                             <Link to="/"
-                                className="inline-flex items-center gap-1.5 text-sm transition-colors"
-                                style={{ color: 'var(--text-muted)' }}
-                                onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
-                                onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
+                                className="inline-flex items-center gap-1.5 text-sm hover-text"
+                                style={{ color: 'var(--text-muted)' }}>
                                 <FiArrowLeft size={14} />
                                 Kembali ke Beranda
                             </Link>

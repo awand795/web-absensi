@@ -33,6 +33,38 @@ const LocationManagement = () => {
     const [gettingGps, setGettingGps] = useState(false);
     const [mapCenter, setMapCenter] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [userPosition, setUserPosition] = useState(null);
+    const [distanceToLoc, setDistanceToLoc] = useState({});
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => setUserPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                () => {},
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+    }, []);
+
+    const calculateDistance = (lat1, lng1, lat2, lng2) => {
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                 Math.sin(dLng/2) * Math.sin(dLng/2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    };
+
+    useEffect(() => {
+        if (userPosition && locations.length > 0) {
+            const dists = {};
+            locations.forEach(loc => {
+                dists[loc.id] = calculateDistance(userPosition.lat, userPosition.lng, parseFloat(loc.latitude), parseFloat(loc.longitude));
+            });
+            setDistanceToLoc(dists);
+        }
+    }, [userPosition, locations]);
 
     const fetchLocations = async () => {
         try { const res = await api.get('/locations'); setLocations(res.data || []); }
@@ -147,18 +179,27 @@ const LocationManagement = () => {
                         </div>
                         <div className="overflow-x-auto">
                             <table className="table-modern">
-                                <thead><tr><th>Nama</th><th>Latitude</th><th>Longitude</th><th>Radius (m)</th><th>Aksi</th></tr></thead>
+                                <thead><tr><th>Nama</th><th>Latitude</th><th>Longitude</th><th>Radius (m)</th><th>Jarak Saya</th><th>Aksi</th></tr></thead>
                                 <tbody>
                                     {loading ? (
-                                        <tr><td colSpan={5} className="text-center py-12"><div className="flex flex-col items-center gap-2"><div className="loading-spinner w-6 h-6" /><span className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat...</span></div></td></tr>
+                                        <tr><td colSpan={6} className="text-center py-12"><div className="flex flex-col items-center gap-2"><div className="loading-spinner w-6 h-6" /><span className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat...</span></div></td></tr>
                                     ) : locations.length === 0 ? (
-                                        <tr><td colSpan={5} className="text-center py-12"><div className="flex flex-col items-center gap-2"><FiMapPin size={24} style={{ color: 'var(--text-muted)' }} /><span className="text-sm" style={{ color: 'var(--text-muted)' }}>Belum ada lokasi</span></div></td></tr>
+                                        <tr><td colSpan={6} className="text-center py-12"><div className="flex flex-col items-center gap-2"><FiMapPin size={24} style={{ color: 'var(--text-muted)' }} /><span className="text-sm" style={{ color: 'var(--text-muted)' }}>Belum ada lokasi</span></div></td></tr>
                                     ) : locations.map(loc => (
                                         <tr key={loc.id}>
                                             <td className="font-medium" style={{ color: 'var(--text-primary)' }}>{loc.name}</td>
                                             <td style={{ color: 'var(--text-secondary)' }}>{loc.latitude}</td>
                                             <td style={{ color: 'var(--text-secondary)' }}>{loc.longitude}</td>
                                             <td style={{ color: 'var(--text-secondary)' }}>{loc.radius}</td>
+                                            <td>
+                                                {userPosition && distanceToLoc[loc.id] !== undefined ? (
+                                                    <span className={`inline-flex items-center gap-1 text-xs font-medium ${distanceToLoc[loc.id] <= loc.radius ? 'badge badge-approved' : 'badge badge-rejected'}`}>
+                                                        {distanceToLoc[loc.id] <= loc.radius ? '✓ Dalam radius' : `${Math.round(distanceToLoc[loc.id])}m`}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>-</span>
+                                                )}
+                                            </td>
                                             <td><div className="flex gap-2">
                                                 <button className="btn-primary !py-1.5 !px-3 text-xs" onClick={() => handleEdit(loc)}><FiEdit2 size={14} />Edit</button>
                                                 <button className="btn-danger !py-1.5 !px-3 text-xs" onClick={() => handleDelete(loc.id)}><FiTrash2 size={14} />Hapus</button>

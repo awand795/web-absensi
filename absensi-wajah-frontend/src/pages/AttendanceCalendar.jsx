@@ -7,6 +7,7 @@ const AttendanceCalendar = () => {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
+    const [hoveredDay, setHoveredDay] = useState(null);
     const [userId] = useState(() => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         return user.id;
@@ -81,8 +82,8 @@ const AttendanceCalendar = () => {
         <div className="page-container max-w-4xl mx-auto">
             {/* Header */}
             <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
-                    <FiCalendar className="text-white" size={20} />
+                <div className="icon-wrap">
+                    <FiCalendar size={20} />
                 </div>
                 <div>
                     <h1 className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>Kalender Absensi</h1>
@@ -111,20 +112,16 @@ const AttendanceCalendar = () => {
                 {/* Month Header */}
                 <div className="flex items-center justify-between mb-5">
                     <button onClick={prevMonth}
-                        className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
-                        style={{ color: 'var(--text-muted)' }}
-                        onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
-                        onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                        className="flex items-center justify-center w-9 h-9 rounded-xl hover-icon"
+                        style={{ color: 'var(--text-muted)' }}>
                         <FiChevronLeft size={20} />
                     </button>
                     <h2 className="text-lg font-bold" style={{ color: 'var(--text-heading)' }}>
                         {monthNames[month]} {year}
                     </h2>
                     <button onClick={nextMonth}
-                        className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
-                        style={{ color: 'var(--text-muted)' }}
-                        onMouseOver={e => { e.target.style.background = 'var(--bg-hover)'; e.target.style.color = 'var(--text-primary)'; }}
-                        onMouseOut={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--text-muted)'; }}>
+                        className="flex items-center justify-center w-9 h-9 rounded-xl hover-icon"
+                        style={{ color: 'var(--text-muted)' }}>
                         <FiChevronRight size={20} />
                     </button>
                 </div>
@@ -149,17 +146,18 @@ const AttendanceCalendar = () => {
                         const colors = statusColors[status] || statusColors.empty;
                         const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
                         const isSelected = selectedDay === day;
+                        const isHovered = hoveredDay === day;
 
                         return (
                             <button key={day} onClick={() => setSelectedDay(isSelected ? null : day)}
+                                onMouseEnter={() => setHoveredDay(day)}
+                                onMouseLeave={() => setHoveredDay(null)}
                                 className="relative aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-medium transition-all duration-200"
                                 style={{
-                                    background: isSelected ? 'var(--bg-hover)' : colors.bg,
+                                    background: isSelected || isHovered ? 'var(--bg-hover)' : colors.bg,
                                     color: colors.text,
                                     border: isToday ? `2px solid #d45a4a` : '2px solid transparent',
-                                }}
-                                onMouseOver={e => { if (!isSelected) e.currentTarget.style.background = 'var(--bg-hover)'; }}
-                                onMouseOut={e => { if (!isSelected) e.currentTarget.style.background = colors.bg; }}>
+                                }}>
                                 <span>{day}</span>
                                 {status !== 'empty' && (
                                     <div className="w-1.5 h-1.5 rounded-full mt-0.5" style={{ background: colors.dot }} />

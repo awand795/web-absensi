@@ -152,10 +152,8 @@ const Profile = () => {
                         )}
                     </div>
                     <button onClick={() => fileInputRef.current?.click()}
-                        className="absolute bottom-0 right-4 w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-200"
-                        style={{ background: 'var(--gradient-primary)' }}
-                        onMouseOver={e => e.target.style.transform = 'scale(1.1)'}
-                        onMouseOut={e => e.target.style.transform = 'scale(1)'}>
+                        className="absolute bottom-0 right-4 w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover-scale"
+                        style={{ background: 'var(--gradient-primary)' }}>
                         {uploading ? <FiLoader className="animate-spin text-white" size={14} /> : <FiCamera className="text-white" size={14} />}
                     </button>
                     <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUploadPhoto} className="hidden" />

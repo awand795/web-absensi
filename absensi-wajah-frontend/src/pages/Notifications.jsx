@@ -109,8 +109,8 @@ const Notifications = () => {
                     <button onClick={markAllRead}
                         className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200"
                         style={{ color: '#d45a4a', background: 'rgba(212,90,74,0.08)' }}
-                        onMouseOver={e => e.target.style.background = 'rgba(212,90,74,0.15)'}
-                        onMouseOut={e => e.target.style.background = 'rgba(212,90,74,0.08)'}>
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover-primary-soft"
+                        style={{ color: '#d45a4a', background: 'rgba(212,90,74,0.08)' }}>
                         <FiCheck size={14} />
                         Semua Dibaca
                     </button>
@@ -157,8 +157,8 @@ const Notifications = () => {
                                     onClick={() => !n.is_read && markRead(n.id)}
                                     className="glass-card p-4 cursor-pointer transition-all duration-200"
                                     style={{ opacity: n.is_read ? 0.7 : 1, borderLeft: n.is_read ? 'none' : `3px solid #d45a4a` }}
-                                    onMouseOver={e => e.currentTarget.style.transform = 'translateX(4px)'}
-                                    onMouseOut={e => e.currentTarget.style.transform = 'translateX(0)'}>
+                                    className="glass-card p-4 cursor-pointer transition-all duration-200 hover-lift"
+                                    style={{ opacity: n.is_read ? 0.7 : 1, borderLeft: n.is_read ? 'none' : `3px solid #d45a4a` }}>
                                     <div className="flex items-start gap-3">
                                         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                                             style={{ background: iconData.bg, color: iconData.color }}>
@@ -177,8 +177,8 @@ const Notifications = () => {
                                             <Link to={n.link}
                                                 className="shrink-0 p-1.5 rounded-lg transition-all duration-200"
                                                 style={{ color: 'var(--text-muted)' }}
-                                                onMouseOver={e => { e.target.style.color = '#d45a4a'; e.target.style.background = 'rgba(212,90,74,0.08)'; }}
-                                                onMouseOut={e => { e.target.style.color = 'var(--text-muted)'; e.target.style.background = 'transparent'; }}>
+                                                className="shrink-0 p-1.5 rounded-lg transition-all duration-200 hover-primary-soft"
+                                                style={{ color: 'var(--text-muted)' }}>
                                                 <FiArrowRight size={14} />
                                             </Link>
                                         )}

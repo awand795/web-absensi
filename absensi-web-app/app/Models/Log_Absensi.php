@@ -33,4 +33,14 @@ class Log_Absensi extends Model
         return [
         ];
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class, 'shift_id');
+    }
 }

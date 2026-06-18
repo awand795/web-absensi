@@ -12,6 +12,9 @@ use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\ShiftSwapController;
+use App\Http\Controllers\Api\BreakController;
+use App\Http\Controllers\Api\EmailConfigController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -34,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/report/dashboard', [ReportController::class, 'dashboardSummary']);
     Route::get('/report/user/{user_id}', [ReportController::class, 'userMonthlyReport']);
     Route::get('/report/global', [ReportController::class, 'globalReport']);
+    Route::get('/report/charts', [ReportController::class, 'chartsData']);
     Route::get('/locations', [LocationController::class, 'index']);
     Route::post('/locations/verify', [LocationController::class, 'verify']);
 
@@ -53,6 +57,18 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/export/excel', [ExportController::class, 'exportExcel']);
     Route::get('/export/csv', [ExportController::class, 'exportCsv']);
 
+    // Break tracking
+    Route::post('/break/start', [BreakController::class, 'startBreak']);
+    Route::post('/break/end', [BreakController::class, 'endBreak']);
+    Route::get('/break/status', [BreakController::class, 'status']);
+
+    // Shift swapping
+    Route::get('/shift-swaps', [ShiftSwapController::class, 'index']);
+    Route::post('/shift-swaps', [ShiftSwapController::class, 'store']);
+    Route::put('/shift-swaps/{id}/approve', [ShiftSwapController::class, 'approve']);
+    Route::post('/shift-swaps/{id}/reject', [ShiftSwapController::class, 'reject']);
+    Route::delete('/shift-swaps/{id}', [ShiftSwapController::class, 'destroy']);
+
     // Admin routes
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function(){
         Route::get('/admin/users', [UserController::class, 'index']);
@@ -71,5 +87,14 @@ Route::middleware('auth:sanctum')->group(function(){
         // Admin: announcements
         Route::post('/admin/announcements', [NotificationController::class, 'storeAnnouncement']);
         Route::delete('/admin/announcements/{id}', [NotificationController::class, 'destroyAnnouncement']);
+
+        // Admin: overtime approval
+        Route::get('/admin/overtime/pending', [LogAbsensi::class, 'pendingOvertime']);
+        Route::put('/admin/overtime/{id}/approve', [LogAbsensi::class, 'approveOvertime']);
+        Route::put('/admin/overtime/{id}/reject', [LogAbsensi::class, 'rejectOvertime']);
+
+        // Admin: email settings
+        Route::get('/admin/email-settings', [EmailConfigController::class, 'show']);
+        Route::put('/admin/email-settings', [EmailConfigController::class, 'update']);
     });
 });

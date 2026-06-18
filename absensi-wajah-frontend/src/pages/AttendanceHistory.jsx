@@ -111,10 +111,8 @@ const AttendanceHistory = () => {
                             <FiGrid size={18} />
                         </Link>
                         <button onClick={() => downloadFile(`/export/csv?month=${month}&year=${year}`, `laporan-${month}-${year}.csv`)}
-                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200"
-                            style={{ color: '#7d9b76', background: 'rgba(125,155,118,0.08)' }}
-                            onMouseOver={e => e.target.style.background = 'rgba(125,155,118,0.15)'}
-                            onMouseOut={e => e.target.style.background = 'rgba(125,155,118,0.08)'}>
+                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover-success"
+                            style={{ color: '#7d9b76', background: 'rgba(125,155,118,0.08)' }}>
                             <FiDownload size={14} />
                             Export CSV
                         </button>

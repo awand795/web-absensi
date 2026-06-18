@@ -417,8 +417,47 @@
 .hover-scale { transition: transform 0.2s ease; }
 .hover-scale:hover { transform: scale(1.05); }
 
-.hover-lift { transition: all 0.2s ease; }
-.hover-lift:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.hover-lift { transition: all 0.2s ease, box-shadow 0.3s ease; }
+.hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.hover-card { transition: all 0.3s ease; }
+.hover-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.hover-danger { transition: all 0.2s ease; }
+.hover-danger:hover { background: rgba(201, 74, 74, 0.08); color: #c94a4a; }
+
+.hover-success { transition: all 0.2s ease; }
+.hover-success:hover { background: rgba(125, 155, 118, 0.15); }
+
+.hover-primary-soft { transition: all 0.2s ease; }
+.hover-primary-soft:hover { background: rgba(212, 90, 74, 0.15); }
+
+.hover-border { transition: border-color 0.2s ease; }
+.hover-border:hover { border-color: var(--border-strong); }
+
+.hover-icon { transition: all 0.2s ease; }
+.hover-icon:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* NavLink active + hover */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+.nav-link:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.nav-link.active {
+  color: #d45a4a;
+  background: rgba(212, 90, 74, 0.08);
+}
 
 /* Icon wrapper with theme-aware gradient */
 .icon-wrap {
