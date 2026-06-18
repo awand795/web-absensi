@@ -32,6 +32,14 @@ try {
     // of calling realpath() on a path that might not exist yet during config loading.
     $_ENV['VIEW_COMPILED_PATH'] = $storageRoot . '/framework/views';
 
+    // Register FilesystemServiceProvider first because ViewServiceProvider depends
+    // on the 'files' binding ($app['files']) in its registerViewFinder() and
+    // registerBladeCompiler() methods. Without this, ViewServiceProvider will
+    // throw "Target class [files] does not exist."
+    if (!$app->providerIsLoaded(\Illuminate\Filesystem\FilesystemServiceProvider::class)) {
+        $app->register(\Illuminate\Filesystem\FilesystemServiceProvider::class);
+    }
+
     // Register ViewServiceProvider early so the 'view' binding exists in the container
     // before kernel bootstrap runs. The exception handler depends on 'view' via
     // response()->json(), and without this it crashes with "Target class [view] does
