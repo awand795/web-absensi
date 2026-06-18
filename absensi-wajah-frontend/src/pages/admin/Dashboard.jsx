@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FiUsers, FiCheckCircle, FiCalendar, FiBarChart2, FiLoader, FiTrendingUp, FiPieChart } from 'react-icons/fi';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import api from '../../api/axios';
+import { CardSkeleton, ChartSkeleton } from '../../components/Skeleton';
 
 const Dashboard = () => {
     const [data, setData] = useState({});
@@ -49,11 +50,10 @@ const Dashboard = () => {
     if (loading) {
         return (
             <div className="page-container">
-                <div className="flex items-center justify-center min-h-[60vh]">
-                    <div className="flex flex-col items-center gap-3">
-                        <div className="loading-spinner w-8 h-8" />
-                        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat dashboard...</p>
-                    </div>
+                <CardSkeleton count={3} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <ChartSkeleton />
+                    <ChartSkeleton />
                 </div>
             </div>
         );
@@ -72,7 +72,7 @@ const Dashboard = () => {
             {/* Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                 {stats.map((stat, i) => (
-                    <div key={i} className="glass-card p-6 relative overflow-hidden group">
+                    <div key={i} className="glass-card p-6 relative overflow-hidden group animate-stagger" style={{ animationDelay: `${i * 0.1}s` }}>
                         <div className="absolute top-0 right-0 w-24 h-24 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
                             <div className="w-full h-full rounded-bl-full" style={{ background: `linear-gradient(135deg, ${stat.color}, ${stat.color}88)` }} />
                         </div>
@@ -91,7 +91,7 @@ const Dashboard = () => {
             {/* Bento Grid Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 {/* Monthly Attendance Bar Chart */}
-                <div className="glass-card p-6">
+                <div className="glass-card p-6 animate-stagger" style={{ animationDelay: '0.3s' }}>
                     <div className="flex items-center gap-2 mb-4">
                         <FiTrendingUp size={18} style={{ color: '#d45a4a' }} />
                         <h2 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Kehadiran Bulanan</h2>
@@ -114,7 +114,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Today's Status Pie Chart */}
-                <div className="glass-card p-6">
+                <div className="glass-card p-6 animate-stagger" style={{ animationDelay: '0.4s' }}>
                     <div className="flex items-center gap-2 mb-4">
                         <FiPieChart size={18} style={{ color: '#d45a4a' }} />
                         <h2 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Status Hari Ini</h2>
@@ -139,7 +139,7 @@ const Dashboard = () => {
             {/* Second Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Top Employees */}
-                <div className="glass-card p-6">
+                <div className="glass-card p-6 animate-stagger" style={{ animationDelay: '0.5s' }}>
                     <div className="flex items-center gap-2 mb-4">
                         <FiUsers size={18} style={{ color: '#7d9b76' }} />
                         <h2 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Karyawan Teraktif Bulan Ini</h2>
@@ -165,7 +165,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Shift Distribution */}
-                <div className="glass-card p-6">
+                <div className="glass-card p-6 animate-stagger" style={{ animationDelay: '0.6s' }}>
                     <div className="flex items-center gap-2 mb-4">
                         <FiCalendar size={18} style={{ color: '#d4a853' }} />
                         <h2 className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>Distribusi Shift</h2>

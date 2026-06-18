@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiUsers, FiEdit2, FiTrash2, FiSave, FiX, FiLoader, FiUserPlus, FiCheck } from 'react-icons/fi';
 import api from '../../api/axios';
+import Skeleton from '../../components/Skeleton';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -73,9 +74,8 @@ const UserManagement = () => {
                     <table className="table-modern">
                         <thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
                         <tbody>
-                            {loading ? (<tr><td colSpan={5} className="text-center py-12"><div className="flex flex-col items-center gap-2"><div className="loading-spinner w-6 h-6" /><span className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat data...</span></div></td></tr>)
-                            : users.map(u => (
-                                <tr key={u.id}>
+                            {loading ? (<tr><td colSpan={5} className="px-4 py-6"><Skeleton variant="table-row" count={5} /></td></tr>                            ) : users.map(u => (
+                                <tr key={u.id} className="animate-fadeIn">
                                     {editing === u.id ? (
                                         <>
                                             <td><input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="input-field text-sm" /></td>

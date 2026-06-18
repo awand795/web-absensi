@@ -371,7 +371,39 @@
   .page-container { padding-left: 2rem; padding-right: 2rem; }
 }
 
-/* Loading Spinner */
+/* ============ ANIMATIONS ============ */
+
+/* Fade In Up — untuk entry animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger — grup dengan delay bertahap */
+.animate-fadeIn { animation: fadeInUp 0.5s ease both; }
+.animate-stagger { animation: fadeInUp 0.5s ease both; }
+
+/* Shimmer — untuk skeleton loading */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Slide In Right — untuk toast */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Pulse — untuk indikator live */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }

@@ -9,6 +9,7 @@ import Notifications from './pages/Notifications';
 import AttendanceCalendar from './pages/AttendanceCalendar';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
+import { ToastProvider } from './components/Toast';
 
 const Attendance = lazy(() => import('./pages/Attendance'));
 const FaceRegister = lazy(() => import('./pages/FaceRegister'));
@@ -72,9 +73,11 @@ function AppLayout() {
 
 function App() {
   return (
-    <Router>
-      <AppLayout />
-    </Router>
+    <ToastProvider>
+      <Router>
+        <AppLayout />
+      </Router>
+    </ToastProvider>
   );
 }
 

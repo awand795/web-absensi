@@ -3,6 +3,7 @@ import { FiCalendar, FiChevronLeft, FiChevronRight, FiClock, FiDownload, FiGrid 
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import downloadFile from '../api/download';
+import Skeleton from '../components/Skeleton';
 
 const AttendanceHistory = () => {
     const [records, setRecords] = useState([]);
@@ -140,11 +141,8 @@ const AttendanceHistory = () => {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={4} className="text-center py-12">
-                                        <div className="flex flex-col items-center gap-2">
-                                            <div className="loading-spinner w-6 h-6" />
-                                            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat data...</span>
-                                        </div>
+                                    <td colSpan={4} className="px-4 py-6">
+                                        <Skeleton variant="table-row" count={5} />
                                     </td>
                                 </tr>
                             ) : records.length === 0 ? (

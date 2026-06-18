@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiSettings, FiPlus, FiEdit2, FiTrash2, FiClock, FiLoader } from 'react-icons/fi';
 import api from '../../api/axios';
+import Skeleton from '../../components/Skeleton';
 
 const ShiftManagement = () => {
     const [shifts, setShifts] = useState([]);
@@ -80,8 +81,8 @@ const ShiftManagement = () => {
                                 <thead><tr><th>Nama</th><th>Jam Mulai</th><th>Jam Selesai</th><th>Aksi</th></tr></thead>
                                 <tbody>
                                     {loading ? (
-                                        <tr><td colSpan={4} className="text-center py-12">
-                                            <div className="flex flex-col items-center gap-2"><div className="loading-spinner w-6 h-6" /><span className="text-sm" style={{ color: 'var(--text-muted)' }}>Memuat...</span></div>
+                                        <tr><td colSpan={4} className="px-4 py-6">
+                                            <Skeleton variant="table-row" count={4} />
                                         </td></tr>
                                     ) : shifts.length === 0 ? (
                                         <tr><td colSpan={4} className="text-center py-12">
