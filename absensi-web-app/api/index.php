@@ -37,6 +37,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
+// ──────────────────────────────────────────────
+// 2. Fix Vercel path stripping
+//
+// Vercel routes /api/* to /api/index.php. In the PHP runtime:
+//   - SCRIPT_NAME = /api/index.php → base URL = /api
+//   - PATH_INFO   = /login         → used directly as request path
+//
+// This strips /api from the path (e.g., /api/login → /login),
+// causing 404 on API routes which have the /api prefix.
+//
+// Override SCRIPT_NAME to /index.php so base URL becomes empty,
+// and unset PATH_INFO so Symfony recalculates path from REQUEST_URI.
+// ──────────────────────────────────────────────
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+unset($_SERVER['PATH_INFO']);
+
 // Create storage and bootstrap cache directories in /tmp for Vercel
 $storageRoot = '/tmp/storage';
 $storageDirs = [
