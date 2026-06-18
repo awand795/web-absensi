@@ -3,23 +3,19 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
-// Ensure errors are displayed during debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// 1. Matikan error display HTML, kita mau JSON
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
-// Create storage directories in /tmp for Vercel's read-only environment
+// 2. Setup folder storage di /tmp (Vercel)
 $storageDirs = [
     '/tmp/storage/framework/views',
     '/tmp/storage/framework/sessions',
     '/tmp/storage/framework/cache',
     '/tmp/storage/logs',
 ];
-
 foreach ($storageDirs as $dir) {
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
 }
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -27,22 +23,24 @@ require __DIR__ . '/../vendor/autoload.php';
 try {
     /** @var Application $app */
     $app = require_once __DIR__ . '/../bootstrap/app.php';
-
-    // Force Laravel to use /tmp for its storage-related needs
+    
+    // Paksa storage path ke /tmp
     $app->useStoragePath('/tmp/storage');
 
-    // Handle the request
+    // 3. PAKSA REQUEST MENJADI API (JSON)
     $request = Request::capture();
+    $request->headers->set('Accept', 'application/json');
+
     $app->handleRequest($request);
 
 } catch (\Throwable $e) {
-    // If headers already sent, we just echo
-    if (!headers_sent()) {
-        http_response_code(500);
-    }
-    echo "<h1>FATAL ERROR DURING REQUEST HANDLING</h1>";
-    echo "<p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<p><strong>File:</strong> " . $e->getFile() . "</p>";
-    echo "<p><strong>Line:</strong> " . $e->getLine() . "</p>";
-    echo "<pre><strong>Trace:</strong>\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+    // Jika crash parah, keluarkan JSON manual
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode([
+        'error' => true,
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine()
+    ]);
 }
