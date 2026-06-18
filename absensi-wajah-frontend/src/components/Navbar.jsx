@@ -29,7 +29,6 @@ const Navbar = () => {
         { to: '/face-register', icon: <FiCamera size={18} />, label: 'Daftar Wajah' },
         { to: '/history', icon: <FiCalendar size={18} />, label: 'Riwayat' },
         { to: '/leave', icon: <FiFileText size={18} />, label: 'Izin' },
-        { to: '/profile', icon: <FiUser size={18} />, label: 'Profil' },
         { to: '/calendar', icon: <FiGrid size={18} />, label: 'Kalender' },
         { to: '/notifications', icon: <FiBell size={18} />, label: 'Notifikasi' },
         { to: '/profile', icon: <FiUser size={18} />, label: 'Profil' },

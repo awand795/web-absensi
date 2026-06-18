@@ -395,3 +395,40 @@
   color: #c04a3a;
   text-decoration: underline;
 }
+
+/* ============ THEME-AWARE UTILITY CLASSES ============ */
+.text-theme { color: var(--text-primary); }
+.text-theme-secondary { color: var(--text-secondary); }
+.text-theme-muted { color: var(--text-muted); }
+.text-theme-heading { color: var(--text-heading); }
+
+.bg-theme-page { background: var(--bg-page); }
+.bg-theme-card { background: var(--bg-card); }
+.bg-theme-hover { background: var(--bg-hover); }
+.border-theme { border-color: var(--border-subtle); }
+
+/* Hover utility — replaces inline onMouseOver handlers */
+.hover-bg { transition: background 0.2s ease, color 0.2s ease; }
+.hover-bg:hover { background: var(--bg-hover); }
+
+.hover-text { transition: color 0.2s ease; }
+.hover-text:hover { color: var(--text-heading); }
+
+.hover-scale { transition: transform 0.2s ease; }
+.hover-scale:hover { transform: scale(1.05); }
+
+.hover-lift { transition: all 0.2s ease; }
+.hover-lift:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+/* Icon wrapper with theme-aware gradient */
+.icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: var(--gradient-primary);
+  box-shadow: 0 4px 12px rgba(212, 90, 74, 0.2);
+}
+.icon-wrap svg { color: white; }
