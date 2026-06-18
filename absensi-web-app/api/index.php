@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
-// Create storage directories in /tmp for Vercel
+// Create storage and bootstrap cache directories in /tmp for Vercel
 $storageRoot = '/tmp/storage';
 $storageDirs = [
     $storageRoot . '/framework/views',
@@ -19,6 +19,11 @@ foreach ($storageDirs as $dir) {
     if (!is_dir($dir)) mkdir($dir, 0755, true);
 }
 
+$tmpBootstrapPath = '/tmp/bootstrap';
+if (!is_dir($tmpBootstrapPath . '/cache')) {
+    mkdir($tmpBootstrapPath . '/cache', 0755, true);
+}
+
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
@@ -27,6 +32,10 @@ try {
 
     // Set storage path
     $app->useStoragePath($storageRoot);
+
+    // Redirect bootstrap/cache to /tmp so PackageManifest and other
+    // cache writers have a writable directory (read-only on Vercel).
+    $app->useBootstrapPath($tmpBootstrapPath);
 
     // Pre-set VIEW_COMPILED_PATH so config/view.php picks it up via env() instead
     // of calling realpath() on a path that might not exist yet during config loading.
