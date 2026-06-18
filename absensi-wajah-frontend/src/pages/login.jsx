@@ -79,7 +79,8 @@ const Login = () => {
                                     type="email" value={email}
                                     onChange={(e) => { setEmail(e.target.value); setError(''); }}
                                     placeholder="Masukkan email" required
-                                    className="input-field pl-10"
+                                    className="input-field"
+                                    style={{ paddingLeft: '2.75rem' }}
                                 />
                             </div>
                         </div>
@@ -93,7 +94,8 @@ const Login = () => {
                                     type="password" value={password}
                                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
                                     placeholder="Masukkan password" required
-                                    className="input-field pl-10"
+                                    className="input-field"
+                                    style={{ paddingLeft: '2.75rem' }}
                                 />
                             </div>
                         </div>

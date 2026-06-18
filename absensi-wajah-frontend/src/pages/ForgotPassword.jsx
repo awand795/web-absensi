@@ -97,7 +97,8 @@ const ForgotPassword = () => {
                                             </div>
                                             <input type="email" value={email}
                                                 onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                                                placeholder="Masukkan email" required className="input-field pl-10" />
+                                                placeholder="Masukkan email" required className="input-field"
+                                                style={{ paddingLeft: '2.75rem' }} />
                                         </div>
                                     </div>
                                     <button type="submit" disabled={loading} className="btn-primary w-full py-3">
@@ -130,7 +131,8 @@ const ForgotPassword = () => {
                                             <input type="password" value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
                                                 placeholder="Minimal 6 karakter" required minLength={6}
-                                                className="input-field pl-10" />
+                                                className="input-field"
+                                                style={{ paddingLeft: '2.75rem' }} />
                                         </div>
                                     </div>
                                     <div>
@@ -142,7 +144,8 @@ const ForgotPassword = () => {
                                             <input type="password" value={newPasswordConfirmation}
                                                 onChange={(e) => setNewPasswordConfirmation(e.target.value)}
                                                 placeholder="Ulangi password" required minLength={6}
-                                                className="input-field pl-10" />
+                                                className="input-field"
+                                                style={{ paddingLeft: '2.75rem' }} />
                                         </div>
                                     </div>
 
