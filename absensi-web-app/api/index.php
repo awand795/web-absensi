@@ -5,6 +5,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Debug: Check current directory and target file
+$targetFile = __DIR__ . '/../public/index.php';
+if (!file_exists($targetFile)) {
+    die("Error: Target file not found at: " . realpath($targetFile) . " (Search path: " . $targetFile . ")");
+}
+
 // Create storage directories in /tmp
 $storageDirs = [
     '/tmp/storage/framework/views',
@@ -20,4 +26,4 @@ foreach ($storageDirs as $dir) {
 }
 
 // Forward all requests to Laravel's public/index.php
-require __DIR__ . '/../public/index.php';
+require $targetFile;
