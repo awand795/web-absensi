@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
+// Ensure errors are displayed during debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -27,15 +28,18 @@ try {
     /** @var Application $app */
     $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-    // Force Laravel to use /tmp for its storage-related needs if not already handled
+    // Force Laravel to use /tmp for its storage-related needs
     $app->useStoragePath('/tmp/storage');
 
-    echo "<!-- Laravel Booted -->";
-    
-    $app->handleRequest(Request::capture());
+    // Handle the request
+    $request = Request::capture();
+    $app->handleRequest($request);
 
 } catch (\Throwable $e) {
-    http_response_code(500);
+    // If headers already sent, we just echo
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
     echo "<h1>FATAL ERROR DURING REQUEST HANDLING</h1>";
     echo "<p><strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
     echo "<p><strong>File:</strong> " . $e->getFile() . "</p>";
