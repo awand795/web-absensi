@@ -14,7 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // CORS is handled manually in api/index.php (before Laravel bootstrap)
         // to ensure preflight OPTIONS requests work on Vercel serverless.
-        // Do NOT append HandleCors here — it would duplicate the headers.
+        // Remove default HandleCors to prevent duplicate headers.
+        $middleware->remove(\Illuminate\Http\Middleware\HandleCors::class);
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
