@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import api from './api/axios';
+import { loadModels } from './lib/faceModels';
 
 const FaceCamera = () => {
     const webcamRef = useRef(null);
@@ -17,13 +18,8 @@ const FaceCamera = () => {
             return;
         }
 
-        const loadModels = async () => {
-            const MODEL_URL = '/models';
-            await Promise.all([
-                faceapi.nets.tinyFaceDetector.load(MODEL_URL),
-                faceapi.nets.faceLandmark68Net.load(MODEL_URL),
-                faceapi.nets.faceRecognitionNet.load(MODEL_URL),
-            ]);
+        const init = async () => {
+            await loadModels();
             setModelsLoaded(true);
         };
 
@@ -36,7 +32,7 @@ const FaceCamera = () => {
             }
         };
 
-        loadModels();
+        init();
         loadFaces();
     }, [navigate]);
 
