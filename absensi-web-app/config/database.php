@@ -114,6 +114,10 @@ return [
         'd1' => [
             'driver' => 'd1',
             'database' => env('CF_D1_DATABASE_ID'),
+            'auth' => [
+                'token' => env('CF_D1_API_TOKEN'),
+                'account_id' => env('CF_D1_ACCOUNT_ID'),
+            ],
         ],
 
     ],
